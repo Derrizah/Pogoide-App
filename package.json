@@ -8,6 +8,12 @@
     "test": "jest"
   },
   "dependencies": {
+    "@react-navigation/bottom-tabs": "^5.11.1",
+    "@react-navigation/drawer": "^5.11.3",
+    "@react-navigation/material-bottom-tabs": "^5.3.9",
+    "@react-navigation/material-top-tabs": "^5.3.9",
+    "@react-navigation/native": "^5.8.9",
+    "@react-navigation/stack": "^5.12.6",
     "expo": "~39.0.2",
     "expo-splash-screen": "~0.6.2",
     "expo-status-bar": "~1.0.2",
@@ -15,9 +21,11 @@
     "react": "16.13.1",
     "react-dom": "16.13.1",
     "react-native": "~0.63.3",
-    "react-native-gesture-handler": "~1.7.0",
-    "react-native-reanimated": "~1.13.0",
+    "react-native-gesture-handler": "^1.7.0",
+    "react-native-paper": "^4.4.0",
+    "react-native-reanimated": "^1.13.2",
     "react-native-screens": "~2.10.1",
+    "react-native-tab-view": "^2.15.2",
     "react-native-unimodules": "~0.11.0",
     "react-native-web": "~0.13.12"
   },
@@ -30,5 +38,6 @@
   "jest": {
     "preset": "react-native"
   },
-  "private": true
+  "private": true,
+  "name": "GoBeyond"
 }

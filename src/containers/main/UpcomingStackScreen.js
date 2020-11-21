@@ -1,5 +1,7 @@
 import React from 'react';
 import {
+  Text,
+  FlatList,
   View,
   StyleSheet,
   Image,
@@ -8,12 +10,26 @@ import {
 import { createStackNavigator } from '@react-navigation/stack';
 import images from 'res/images';
 import palette from 'res/palette';
-import CurrentScreen from './CurrentScreen';
+import ListItem from './ListItem';
+import DetailsScreen from './DetailsScreen';
 
+const UpcomingScreen = () => {
+  const events = {
+    type: 'GO Battle League',
+    title: 'Season 5 - The Kanto Cup',
+    thumbnail: 'https://www.leekduck.com/assets/img/events/gobattleleague-season1.jpg',
+    time: 'Starts: Tuesday, November 17, at 12:00 AM GMT+3  Ends: Tuesday, November 24, at 12:00 AM GMT+3',    
+  }
+  return (
+    <FlatList
+      data={events}
+      renderItem={({ item }) => <ListItem event={item}/>}/>
+  );
+}
 
-const CurrentNavigator = createStackNavigator({
-  Current: {
-    screen: CurrentScreen,
+const UpcomingStack = createStackNavigator({
+  Upcoming: {
+    screen: UpcomingScreen,
     navigationOptions: ({ navigation }) => ({
       ...palette.header,
       headerTitle: '',
@@ -40,4 +56,11 @@ const styles = StyleSheet.create({
   headerLogo: { marginLeft: 10, height: 30, width: 80, resizeMode: 'center' },
 });
 
-export default CurrentNavigator;
+export default function UpcomingStackScreen() {
+  return (
+    <UpcomingStack.Navigator>
+      <UpcomingStack.Screen name="Main" component={UpcomingScreen} />
+      <UpcomingStack.Screen name="Details" component={DetailsScreen} />
+    </UpcomingStack.Navigator>
+  )
+}

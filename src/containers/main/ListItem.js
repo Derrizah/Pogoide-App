@@ -3,10 +3,13 @@ import { View, StyleSheet, Image, Text, TouchableOpacity, } from 'react-native';
 import colors from 'res/colors';
 import images from 'res/images';
 
-const ListItem = ({ event }) => {
 
+const ListItem = ( event ) => {
+  goToDetails = () => {
+    this.props.navigation.push('Details', event);
+  }
   return (
-    <View style={styles.container}>
+    <View style={styles.container} onPress={ () => this.goToDetails(event)}>
       <View style={styles.nameContainer}>
         <Image source={event.thumbnail} style={styles.personImage} />
         <View>
@@ -14,9 +17,6 @@ const ListItem = ({ event }) => {
           <Text style={styles.placeName}>{event.time}</Text>
         </View>
       </View>
-      <TouchableOpacity>
-        <Image source={images.more} style={styles.iconMore} />
-      </TouchableOpacity>
     </View>
   );
 };

@@ -6,13 +6,13 @@ import React from 'react';
 import {AppRegistry} from 'react-native';
 import { StatusBar } from 'react-native';
 import {name as appName} from './app.json';
-import AppNavigator from 'containers/AppNavigator';
+import TabNavigator from './src/containers/TabNavigator';
 import { createAppContainer } from '@react-navigation/native';
 
 StatusBar.setBarStyle('light-content', true);
 StatusBar.backgroundColor = '#000';
 
-const Navigation = createAppContainer(AppNavigator);
+const Navigation = createAppContainer(TabNavigator);
 const Root = () => <Navigation />;
 
 // registerRootComponent calls AppRegistry.registerComponent('main', () => App);

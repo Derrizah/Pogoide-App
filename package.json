@@ -33,6 +33,7 @@
     "@babel/core": "~7.9.0",
     "babel-jest": "~25.2.6",
     "jest": "~25.2.6",
+    "react-native-vector-icons": "^7.1.0",
     "react-test-renderer": "~16.13.1"
   },
   "jest": {

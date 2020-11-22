@@ -30,7 +30,8 @@ const DetailsScreen = ({ navigation }) => {
       <Albums scrollEnabled={scrollEnabled} />
     </ScrollView>
   );
-};
+}
+export default DetailsScreen;
 
 const styles = StyleSheet.create({
   buttons: {

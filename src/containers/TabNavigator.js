@@ -3,8 +3,8 @@ import images from './current/node_modules/res/images';
 import colors from 'res/colors';
 import { NavigationContainer } from '@react-navigation/native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
-import UpcomingStackScreen from './UpcomingStackScreen'
-import CurrentStackScreen from './CurrentStackScreen'
+import UpcomingStackScreen from './main/UpcomingStackScreen'
+import CurrentStackScreen from './main/CurrentStackScreen'
 
 export default function App() {
   return (

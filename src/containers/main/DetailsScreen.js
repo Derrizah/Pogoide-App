@@ -2,14 +2,13 @@ import React from 'react';
 import { View, StyleSheet, ScrollView, Platform } from 'react-native';
 import { Button } from 'react-native-paper';
 
-ModalStackParams = {
-  Article: { author: string },
-  Albums: undefined,
-};
 
 const scrollEnabled = Platform.select({ web: true, default: false });
 
-const DetailsScreen = ({ navigation }) => {
+//Ensuring a value exists
+// {route.params.type && <Text>{route.params.type}</Text>}
+
+const DetailsScreen = ({ route }) => {
   return (
     <ScrollView>
       <View style={styles.buttons}>
@@ -19,15 +18,8 @@ const DetailsScreen = ({ navigation }) => {
         >
           Push article
         </Button>
-        <Button
-          mode="outlined"
-          onPress={() => navigation.goBack()}
-          style={styles.button}
-        >
-          Go back
-        </Button>
+
       </View>
-      <Albums scrollEnabled={scrollEnabled} />
     </ScrollView>
   );
 }

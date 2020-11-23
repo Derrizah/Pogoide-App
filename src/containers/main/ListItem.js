@@ -1,23 +1,25 @@
 import React from 'react';
-import { View, StyleSheet, Image, Text, TouchableOpacity, } from 'react-native';
-import colors from 'res/colors';
-import images from 'res/images';
+import { View, StyleSheet, Image, Text, TouchableOpacity, Pressable} from 'react-native';
+import colors from './../../res/colors';
+import images from './../../res/images';
 
 
-const ListItem = ( event ) => {
-  goToDetails = () => {
-    this.props.navigation.push('Details', event);
-  }
+const ListItem = ( { item }) => {
+
   return (
-    <View style={styles.container} onPress={ () => this.goToDetails(event)}>
+      <Pressable
+          style={styles.pressable}
+          onPress={ () => this.props.navigation.push('Details', item)}>
+    <View style={styles.container}>
       <View style={styles.nameContainer}>
-        <Image source={event.thumbnail} style={styles.personImage} />
+        <Image source={{uri:item.thumbnail}} style={styles.personImage} />
         <View>
-          <Text style={styles.personName}>{event.title}</Text>
-          <Text style={styles.placeName}>{event.time}</Text>
+          <Text style={styles.personName}>{item.title}</Text>
+          <Text style={styles.placeName}>{item.time}</Text>
         </View>
       </View>
     </View>
+      </Pressable>
   );
 };
 

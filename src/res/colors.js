@@ -10,10 +10,5 @@ const colors = {
     link: '#ffcb05',
     // SEPERATOR
     seperator: '#3d7dca',
-    // STORY
-    storyAdd: '#30ABF1',
-    storyGradient: ['#feda75', '#d62976'],
-    storyRead: ['#ddd'],
-    storyNotification: '#d00',
 }
 export default colors;

@@ -1,4 +1,5 @@
-import colors from 'res/colors';
+import colors from './colors';
+import {Platform} from 'react-native';
 
 const palette = {
     header: {
@@ -15,7 +16,7 @@ const palette = {
             resizeMode: 'contain' 
         },
         headerLeftContainer: {
-            marginLeft: 20, 
+            marginLeft: 500,
             flex: 1, 
             flexDirection: 'row', 
             alignItems: 'center', 

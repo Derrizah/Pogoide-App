@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {PureComponent} from 'react';
 import colors from './../res/colors';
 import { NavigationContainer } from '@react-navigation/native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
@@ -8,40 +8,73 @@ import {createMaterialTopTabNavigator} from "@react-navigation/material-top-tabs
 import {StyleSheet, Text, View} from "react-native";
 import palette from "../res/palette";
 import createStackNavigator from "@react-navigation/stack/src/navigators/createStackNavigator";
+import firebase from 'firebase/app';
+import 'firebase/database';
 
-const RootTab = createStackNavigator();
+const RootStack = createStackNavigator();
 const Tab = createMaterialTopTabNavigator();
-const TabStack = () => (
-    <Tab.Navigator
-        options={{
-            ...palette.header,
-            headerLeft: () => (
-                <View style={headerLeftContainer}>
-                    <Text style={styles.headerTitle}>Go Beyond?</Text>
-                </View>
-            ),
-            headerRight: () => (
-                <View style={styles.headerRightContainer}>
-                    <Text style={styles.headerRightText}>right</Text>
-                </View>
-            ),
-        }}
-        tabBarOptions={{
-            activeTintColor: 'tomato',
-            inactiveTintColor: 'gray',
-        }}
-    >
-        <Tab.Screen name="Current" component={CurrentStackScreen} />
-        <Tab.Screen name="Upcoming" component={UpcomingStackScreen} />
-    </Tab.Navigator>
-)
+class TabStack extends PureComponent {
+    state = {
+        currentsList: [],
+        // upcomingsList: [],
+        loading: true
+    }
+    async componentDidMount() {
+    try{
+        const firebaseConfig = {
+            apiKey: "AIzaSyAI3afaLzK3s8JLkIw3rC9oR93O68zd7zg",
+            authDomain: "blcd-notify.firebaseapp.com",
+            databaseURL: "https://blcd-notify.firebaseio.com",
+            projectId: "blcd-notify",
+            storageBucket: "blcd-notify.appspot.com",
+            messagingSenderId: "325992268887",
+            appId: "1:325992268887:web:a49eb1e5795854c1a04f12"
+        };
+        // Initialize Firebase
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.database();
+        const current = db.ref('/currentEvents').once('value');
+        // const upcoming= db.ref('/').once('upcomingEvents');
+        console.log(current);
+        this.setState({currentsList: current, loading: false});
+    }   catch(err){
+            console.log("Error fetching data---------", err);
+        }
+    }
+    render() {
+        return (
+            <Tab.Navigator
+                options={{
+                    ...palette.header,
+                    headerLeft: () => (
+                        <View style={headerLeftContainer}>
+                            <Text style={styles.headerTitle}>Go Beyond?</Text>
+                        </View>
+                    ),
+                    headerRight: () => (
+                        <View style={styles.headerRightContainer}>
+                            <Text style={styles.headerRightText}>right</Text>
+                        </View>
+                    ),
+                }}
+                tabBarOptions={{
+                    activeTintColor: 'tomato',
+                    inactiveTintColor: 'gray',
+                }}
+            >
+                <Tab.Screen name="Current" component={CurrentStackScreen} options={this.state.currentsList}/>
+                <Tab.Screen name="Upcoming" component={UpcomingStackScreen}/>
+            </Tab.Navigator>
+        )
+    }
+}
 
 export default function TabNavigator() {
     return (
         <NavigationContainer>
-            <RootTab.Navigator>
-                <RootTab.Screen name="HeaderTitle" component={TabStack} />
-            </RootTab.Navigator>
+            <RootStack.Navigator>
+                <RootStack.Screen name="HeaderTitle" component={TabStack} />
+            </RootStack.Navigator>
         </NavigationContainer>
     );
 }

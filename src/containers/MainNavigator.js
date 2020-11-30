@@ -10,17 +10,36 @@ import palette from "../res/palette";
 import createStackNavigator from "@react-navigation/stack/src/navigators/createStackNavigator";
 import firebase from 'firebase/app';
 import 'firebase/database';
+import {StatusBar, TouchableOpacity} from "react-native-web";
+import {createDrawerNavigator} from "@react-navigation/drawer";
+import {DrawerActions} from "@react-navigation/routers";
+import { Appbar } from 'react-native-paper';
+
+const RootDrawer = createDrawerNavigator();
+class DrawerStack extends PureComponent {
+    render() {
+        return (
+            <NavigationContainer>
+                <RootDrawer.Navigator initialRouteName="Home">
+                    <RootDrawer.Screen name="Home" component={HomeScreen}/>
+                    <RootDrawer.Screen name="Home2" component={HomeScreen}/>
+                </RootDrawer.Navigator>
+            </NavigationContainer>
+        )}
+}
+
 
 const RootStack = createStackNavigator();
 const Tab = createMaterialTopTabNavigator();
 class TabStack extends PureComponent {
-    state = {
-        currentsList: [],
-        // upcomingsList: [],
-        loading: true
-    }
-    async componentDidMount() {
-    try{
+    // state = {
+    //     db: any,
+    //     //currentsList: [],
+    //     // upcomingsList: [],
+    //     // loading: true
+    // }
+    constructor(props) {
+        super(props);
         const firebaseConfig = {
             apiKey: "AIzaSyAI3afaLzK3s8JLkIw3rC9oR93O68zd7zg",
             authDomain: "blcd-notify.firebaseapp.com",
@@ -32,49 +51,91 @@ class TabStack extends PureComponent {
         };
         // Initialize Firebase
         firebase.initializeApp(firebaseConfig);
-        const db = firebase.database();
-        const current = db.ref('/currentEvents').once('value');
-        // const upcoming= db.ref('/').once('upcomingEvents');
-        console.log(current);
-        this.setState({currentsList: current, loading: false});
-    }   catch(err){
-            console.log("Error fetching data---------", err);
-        }
+        this.db = firebase.database();
+        //const dbContext = React.createContext(firebase.database());
+    }
+
+    async componentDidMount() {
+    // try{
+    //     const firebaseConfig = {
+    //         apiKey: "AIzaSyAI3afaLzK3s8JLkIw3rC9oR93O68zd7zg",
+    //         authDomain: "blcd-notify.firebaseapp.com",
+    //         databaseURL: "https://blcd-notify.firebaseio.com",
+    //         projectId: "blcd-notify",
+    //         storageBucket: "blcd-notify.appspot.com",
+    //         messagingSenderId: "325992268887",
+    //         appId: "1:325992268887:web:a49eb1e5795854c1a04f12"
+    //     };
+    //     // Initialize Firebase
+    //     firebase.initializeApp(firebaseConfig);
+    //     const db = firebase.database();
+    //     this.setState({db: db});
+    //     //const current = db.ref('/currentEvents').once('value');
+    //     // const upcoming= db.ref('/').once('upcomingEvents');
+    //     // console.log(current);
+    //     //this.setState({currentsList: current, loading: false});
+    // }   catch(err){
+    //         console.log("Error fetching data---------", err);
+    //     }
     }
     render() {
         return (
+            //<dbContext.Provider>
             <Tab.Navigator
-                options={{
-                    ...palette.header,
-                    headerLeft: () => (
-                        <View style={headerLeftContainer}>
-                            <Text style={styles.headerTitle}>Go Beyond?</Text>
-                        </View>
-                    ),
-                    headerRight: () => (
-                        <View style={styles.headerRightContainer}>
-                            <Text style={styles.headerRightText}>right</Text>
-                        </View>
-                    ),
-                }}
                 tabBarOptions={{
-                    activeTintColor: 'tomato',
+                    activeTintColor: 'white',
                     inactiveTintColor: 'gray',
+                    indicatorStyle: {backgroundColor: "white"},
+                    style:{ backgroundColor:"#003a70"},
                 }}
             >
-                <Tab.Screen name="Current" component={CurrentStackScreen} options={this.state.currentsList}/>
-                <Tab.Screen name="Upcoming" component={UpcomingStackScreen}/>
+                <Tab.Screen name="Current" component={CurrentStackScreen} initialParams={{
+                    db: this.db
+                }} />
+                <Tab.Screen name="Upcoming" component={UpcomingStackScreen} />
             </Tab.Navigator>
+            //</dbContext.Provider>
         )
     }
 }
 
-export default function TabNavigator() {
+class HomeScreen extends PureComponent {
+    render() {
+        return (
+            <RootStack.Navigator>
+                <RootStack.Screen name="HeaderTitle" component={TabStack}
+                                  options={{
+                                      header: ({ scene, previous, navigation }) => {
+                                          const { options } = scene.descriptor;
+                                          const title =
+                                              options.headerTitle !== undefined
+                                                  ? options.headerTitle
+                                                  : options.title !== undefined
+                                                  ? options.title
+                                                  : scene.route.name;
+
+
+                                          return (
+                                              <Appbar.Header
+                                                  style={{backgroundColor:"#003a70"}}>
+                                                  <Appbar.Content title="Bum"/>
+                                                  <Appbar.Action icon="dots-vertical"/>
+                                              </Appbar.Header>
+                                          );
+                                      },
+                                  }}/>
+            </RootStack.Navigator>
+        );
+    }
+}
+
+export default function MainNavigator() {
     return (
         <NavigationContainer>
-            <RootStack.Navigator>
-                <RootStack.Screen name="HeaderTitle" component={TabStack} />
-            </RootStack.Navigator>
+            <RootDrawer.Navigator initialRouteName="Home">
+                <RootDrawer.Screen name="Home" component={HomeScreen}/>
+                <RootDrawer.Screen name="Home2" component={HomeScreen}/>
+            </RootDrawer.Navigator>
         </NavigationContainer>
     );
 }
@@ -137,6 +198,7 @@ export default function TabNavigator() {
 // }
 
 const styles = StyleSheet.create({
+    appHeaderContainer: {height: 32},
     headerLeftContainer: {...palette.header.headerLeftContainer},
     headerLogo: { marginLeft: 10, height: 30, width: 80, resizeMode: 'center' },
     headerRightText: { marginRight: 10, height: 30},

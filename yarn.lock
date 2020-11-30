@@ -4554,6 +4554,13 @@
   "resolved" "https://registry.yarnpkg.com/function-bind/-/function-bind-1.1.1.tgz"
   "version" "1.1.1"
 
+"galio-framework@^0.7.1":
+  "integrity" "sha512-5nVSiEvN+X3hZ1c/EmDs7TWu4Jan5vJ8uwPwX1y+qtGQrG7ptINVJmCgyQUhXMrYOO/ex0IGRx6YNdVfw0/IDg=="
+  "resolved" "https://registry.npmjs.org/galio-framework/-/galio-framework-0.7.1.tgz"
+  "version" "0.7.1"
+  dependencies:
+    "opencollective-postinstall" "^2.0.1"
+
 "gaxios@^4.0.0":
   "integrity" "sha512-jOin8xRZ/UytQeBpSXFqIzqU7Fi5TqgPNLlUsSB8kjJ76+FiGBfImF8KJu++c6J4jOldfJUtt0YmkRj2ZpSHTQ=="
   "resolved" "https://registry.npmjs.org/gaxios/-/gaxios-4.0.1.tgz"
@@ -7021,6 +7028,11 @@
   dependencies:
     "is-wsl" "^1.1.0"
 
+"opencollective-postinstall@^2.0.1":
+  "integrity" "sha512-8AV/sCtuzUeTo8gQK5qDZzARrulB3egtLzFgteqB2tcT4Mw7B8Kt7JcDHmltjz6FOAHsvTevk70gZEbhM4ZS9Q=="
+  "resolved" "https://registry.npmjs.org/opencollective-postinstall/-/opencollective-postinstall-2.0.3.tgz"
+  "version" "2.0.3"
+
 "optionator@^0.8.1":
   "integrity" "sha512-+IW9pACdk3XWmmTXG8m3upGUJst5XRGzxMRjXzAuJ1XnIFNvfhjjIuYkDvysnPQ7qzqVzLt78BCruntqRhWQbA=="
   "resolved" "https://registry.yarnpkg.com/optionator/-/optionator-0.8.3.tgz"
@@ -7496,6 +7508,11 @@
   "resolved" "https://registry.yarnpkg.com/react-is/-/react-is-16.13.1.tgz"
   "version" "16.13.1"
 
+"react-native-fast-image@^8.3.4":
+  "integrity" "sha512-LpzAdjUphihUpVEBn5fEv5AILe55rHav0YiZroPZ1rumKDhAl4u2cG01ku2Pb7l8sayjTsNu7FuURAlXUUDsow=="
+  "resolved" "https://registry.npmjs.org/react-native-fast-image/-/react-native-fast-image-8.3.4.tgz"
+  "version" "8.3.4"
+
 "react-native-gesture-handler@*", "react-native-gesture-handler@^1.7.0", "react-native-gesture-handler@>= 1.0.0":
   "version" "1.7.0"
   dependencies:
@@ -7542,6 +7559,11 @@
   "resolved" "https://registry.yarnpkg.com/react-native-screens/-/react-native-screens-2.10.1.tgz"
   "version" "2.10.1"
 
+"react-native-splash-screen@^3.2.0":
+  "integrity" "sha512-Ls9qiNZzW/OLFoI25wfjjAcrf2DZ975hn2vr6U9gyuxi2nooVbzQeFoQS5vQcbCt9QX5NY8ASEEAtlLdIa6KVg=="
+  "resolved" "https://registry.npmjs.org/react-native-splash-screen/-/react-native-splash-screen-3.2.0.tgz"
+  "version" "3.2.0"
+
 "react-native-tab-view@^2.15.2", "react-native-tab-view@>= 2.0.0":
   "integrity" "sha512-2hxLkBnZtEKFDyfvNO5EUywhy3f/EiLOBO8SWqKj4BMBTO0QwnybaPE5MVF00Fhz+VA4+h/iI40Dkrrtq70dGg=="
   "resolved" "https://registry.npmjs.org/react-native-tab-view/-/react-native-tab-view-2.15.2.tgz"
@@ -7572,7 +7594,7 @@
     "unimodules-sensors-interface" "~5.3.0"
     "unimodules-task-manager-interface" "~5.3.0"
 
-"react-native-vector-icons@*", "react-native-vector-icons@^7.1.0", "react-native-vector-icons@>= 6.0.0":
+"react-native-vector-icons@*", "react-native-vector-icons@^7.1.0", "react-native-vector-icons@>= 6.0.0", "react-native-vector-icons@>6.0.0":
   "integrity" "sha512-V2a1zJ4i+kS8O4j183gIwX14St9AxxXabxwYpFBgRhvr2NDXyFcjHDEAgrOYYlt2W57e20aN1tBDU/I+wn9WtQ=="
   "resolved" "https://registry.npmjs.org/react-native-vector-icons/-/react-native-vector-icons-7.1.0.tgz"
   "version" "7.1.0"
@@ -7601,7 +7623,7 @@
     "prop-types" "^15.6.0"
     "react-timer-mixin" "^0.13.4"
 
-"react-native@*", "react-native@>= 0.60.0", "react-native@>=0.42.0", "react-native@>=0.57", "react-native@>=0.62.0-rc.0 <0.64.0", "react-native@~0.63.3":
+"react-native@*", "react-native@^0.63.2", "react-native@>= 0.60.0", "react-native@>=0.42.0", "react-native@>=0.57", "react-native@>=0.57.0", "react-native@>=0.60.0", "react-native@>=0.62.0-rc.0 <0.64.0", "react-native@~0.63.3":
   "integrity" "sha512-71wq13uNo5W8QVQnFlnzZ3AD+XgUBYGhpsxysQFW/hJ8GAt/J5o+Bvhy81FXichp6IBDJDh/JgfHH2gNji8dFA=="
   "resolved" "https://registry.yarnpkg.com/react-native/-/react-native-0.63.3.tgz"
   "version" "0.63.3"
@@ -7654,7 +7676,7 @@
   "resolved" "https://registry.yarnpkg.com/react-timer-mixin/-/react-timer-mixin-0.13.4.tgz"
   "version" "0.13.4"
 
-"react@*", "react@^16.0", "react@^16.13.1", "react@^16.3.0", "react@^16.8.0 || ^17.0.0", "react@>=16.5.1", "react@16.13.1":
+"react@*", "react@^16.0", "react@^16.13.1", "react@^16.3.0", "react@^16.8.0 || ^17.0.0", "react@^16.8.6", "react@>=16.5.1", "react@16.13.1":
   "integrity" "sha512-YMZQQq32xHLX0bz5Mnibv1/LHb3Sqzngu7xstSM+vrkE5Kzr9xE0yMByK5kMoTK30YVJE61WfbxIFFvfeDKT1w=="
   "resolved" "https://registry.yarnpkg.com/react/-/react-16.13.1.tgz"
   "version" "16.13.1"
@@ -7912,6 +7934,11 @@
   "integrity" "sha1-5Dm+Kq7jJzIZUnMPmaiSnk/FBYI="
   "resolved" "https://registry.yarnpkg.com/rimraf/-/rimraf-2.2.8.tgz"
   "version" "2.2.8"
+
+"rn-placeholder@^3.0.3":
+  "integrity" "sha512-EmVeLT8zDcTPilQZ2OHO/IiYUy2gApKGgbshDZBX0C4qxsn0cFATwgwOwyz8O7Vwg1Hul97Ci95hu7d6Js6XMQ=="
+  "resolved" "https://registry.npmjs.org/rn-placeholder/-/rn-placeholder-3.0.3.tgz"
+  "version" "3.0.3"
 
 "rsvp@^4.8.4":
   "integrity" "sha512-nfMOlASu9OnRJo1mbEk2cz0D56a1MBNrJ7orjRZQG10XDyuvwksKbuXNp6qa+kbn839HwjwhBzhFmdsaEAfauA=="

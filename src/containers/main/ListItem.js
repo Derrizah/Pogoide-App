@@ -9,7 +9,7 @@ const ListItem = ( { item }) => {
   return (
       <Pressable
           style={styles.pressable}
-          onPress={ () => this.props.navigation.push('Details', item)}>
+          onPress={ () => props.navigation.push('Details', item)}>
     <View style={styles.container}>
       <View style={styles.nameContainer}>
         <Image source={{uri:item.thumbnail}} style={styles.personImage} />

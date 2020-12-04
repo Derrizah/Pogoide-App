@@ -69,7 +69,6 @@ function CardItem({
     function renderAuthor() {
         return (
             <Block flex row style={[styles.footer, footerStyle]} space="between">
-                <Block flex={0.3}>{renderAvatar()}</Block>
                 <Block flex={1.7}>
                     <Block style={styles.title}>
                         <Text size={theme.SIZES.FONT * 0.875} color={titleColor}>
@@ -128,29 +127,25 @@ CardItem.propTypes = {
     footerStyle: PropTypes.object,
 };
 
-const styles = theme =>
+const styles = ItemTheme =>
     StyleSheet.create({
         card: {
-            borderWidth: 10,
-            borderColor: theme.COLORS.FACEBOOK,
-            backgroundColor: theme.COLORS.WHITE,
-            width: theme.SIZES.CARD_WIDTH,
-            marginVertical: theme.SIZES.CARD_MARGIN_VERTICAL,
-            paddingVertical: theme.SIZES.CARD_MARGIN_VERTICAL,
-            paddingBottom: theme.SIZES.CARD_MARGIN_VERTICAL,
+            borderColor: ItemTheme.COLORS.FACEBOOK,
+            backgroundColor: ItemTheme.COLORS.WHITE,
+            width: ItemTheme.SIZES.CARD_WIDTH,
         },
         footer: {
             justifyContent: 'flex-start',
             alignItems: 'center',
-            paddingHorizontal: theme.SIZES.CARD_FOOTER_HORIZONTAL,
-            paddingVertical: theme.SIZES.CARD_FOOTER_VERTICAL,
-            backgroundColor: theme.COLORS.TRANSPARENT,
+            paddingHorizontal: ItemTheme.SIZES.CARD_FOOTER_HORIZONTAL,
+            paddingVertical: ItemTheme.SIZES.CARD_FOOTER_VERTICAL,
+            backgroundColor: ItemTheme.COLORS.TRANSPARENT,
             zIndex: 1,
         },
         avatar: {
-            width: theme.SIZES.CARD_AVATAR_WIDTH,
-            height: theme.SIZES.CARD_AVATAR_HEIGHT,
-            borderRadius: theme.SIZES.CARD_AVATAR_RADIUS,
+            width: ItemTheme.SIZES.CARD_AVATAR_WIDTH,
+            height: ItemTheme.SIZES.CARD_AVATAR_HEIGHT,
+            borderRadius: ItemTheme.SIZES.CARD_AVATAR_RADIUS,
         },
         title: {
             justifyContent: 'center',
@@ -161,13 +156,13 @@ const styles = theme =>
         },
         image: {
             width: 'auto',
-            height: theme.SIZES.CARD_IMAGE_HEIGHT,
+            height: ItemTheme.SIZES.CARD_IMAGE_HEIGHT,
         },
         round: {
-            borderRadius: theme.SIZES.CARD_ROUND,
+            borderRadius: ItemTheme.SIZES.CARD_ROUND,
         },
         rounded: {
-            borderRadius: theme.SIZES.CARD_ROUNDED,
+            borderRadius: ItemTheme.SIZES.CARD_ROUNDED,
         },
     });
 

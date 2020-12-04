@@ -13,7 +13,7 @@ StatusBar.setBarStyle('light-content', true);
 StatusBar.backgroundColor = '#000';
 
 export default () => {
-    return MainNavigator
+    return <MainNavigator/>
 };
 
 // const Navigation = createAppContainer(TabNavigator);

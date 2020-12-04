@@ -50,7 +50,9 @@ class TabStack extends PureComponent {
             appId: "1:325992268887:web:a49eb1e5795854c1a04f12"
         };
         // Initialize Firebase
-        firebase.initializeApp(firebaseConfig);
+        if (firebase.apps.length === 0) {
+            firebase.initializeApp(firebaseConfig);
+        }
         this.db = firebase.database();
         //const dbContext = React.createContext(firebase.database());
     }
@@ -118,7 +120,7 @@ class HomeScreen extends PureComponent {
                                           return (
                                               <Appbar.Header
                                                   style={{backgroundColor:"#003a70"}}>
-                                                  <Appbar.Content title="Bum"/>
+                                                  <Appbar.Content title="Pogoide"/>
                                                   <Appbar.Action icon="dots-vertical"/>
                                               </Appbar.Header>
                                           );

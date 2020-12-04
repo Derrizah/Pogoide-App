@@ -30,19 +30,21 @@ export class CurrentScreen extends PureComponent {
     }
     state = {
         eventsList: [],
-        loading: true
+        loading: true,
+        refreshing: false,
     }
     async componentDidMount() {
-        let data = [];
-        const current = this.db.ref('/currentEvents');
-        await current.once('value').then((snapshot) => {
-            data = snapshot.val();
-        })
-        const eventsData = Object.keys(data).map(key => ({
-            key,
-            ...data[key]
-        }));
-        this.setState({eventsList: eventsData, loading:false});
+        // let data = [];
+        // const current = this.db.ref('/currentEvents');
+        // await current.once('value').then((snapshot) => {
+        //     data = snapshot.val();
+        // })
+        // const eventsData = Object.keys(data).map(key => ({
+        //     key,
+        //     ...data[key]
+        // }));
+        // this.setState({eventsList: eventsData, loading:false});
+        await this.getCurrent();
         console.log(data);
         //this.setState({eventsList: this.props.currentsList, loading:false});
     }
@@ -70,10 +72,24 @@ export class CurrentScreen extends PureComponent {
             title={item.title}
             caption={item.time}
             location={item.type}
-            imageBlockStyle={{padding: theme.SIZES.BASE / 2}}
             image={item.thumbnail}
         />
         </TouchableOpacity>
+    }
+    onRefresh() {
+        this.setState({refreshing: true},() => {this.getCurrent();});
+    }
+    async getCurrent(){
+        let data = [];
+        const current = this.db.ref('/currentEvents');
+        await current.once('value').then((snapshot) => {
+            data = snapshot.val();
+        })
+        const eventsData = Object.keys(data).map(key => ({
+            key,
+            ...data[key]
+        }));
+        this.setState({eventsList: eventsData, loading: false, refreshing: false});
     }
     render() {
         if(!this.state.loading){
@@ -91,6 +107,8 @@ export class CurrentScreen extends PureComponent {
                 }
                 data={this.state.eventsList}
                 renderItem={({item}) => this.renderItem(item)}
+                onRefresh={() => this.onRefresh()}
+                refreshing={this.state.refreshing}
                 />
         )} else {
         return <PlaceholderItem />
@@ -178,6 +196,7 @@ export default class CurrentStackScreen extends PureComponent {
 // )
 
 const styles = StyleSheet.create({
+    card: {marginTop: 4, marginBottom: 8, marginRight: 6, marginLeft: 6},
   headerLogo: { marginLeft: 10, height: 30, width: 80, resizeMode: 'center' },
   headerRightText: { marginRight: 10, height: 30},
 });

@@ -5,21 +5,19 @@ import {
     View,
     StyleSheet,
     Image,
-    TouchableOpacity, Pressable
+    TouchableOpacity, Pressable, AsyncStorage
 } from 'react-native';
 import { createStackNavigator, TransitionPresets } from '@react-navigation/stack';
 import images from './../../res/images';
 import ListItem from './ListItem';
 import DetailsScreen from './DetailsScreen';
 import {render} from "react-native-web";
-import {ActivityIndicator} from "react-native-paper";
+import {ActivityIndicator, IconButton, Colors, TouchableRipple} from "react-native-paper";
 import firebase from 'firebase/app';
 import 'firebase/database';
 import {Platform} from "react-native-web";
-import {Card, theme} from 'galio-framework';
-import CardItem from "./CardItem";
-import PlaceholderCard from "./PlaceholderCard";
-import PlaceholderItem from "./PlaceholderItem";
+import NetInfo from "@react-native-community/netinfo";
+import EventItem, {PlaceholderEvent} from "./EventItem";
 
 export class CurrentScreen extends PureComponent {
     constructor(props) {
@@ -32,6 +30,7 @@ export class CurrentScreen extends PureComponent {
         eventsList: [],
         loading: true,
         refreshing: false,
+        connection: true,
     }
     async componentDidMount() {
         // let data = [];
@@ -44,7 +43,24 @@ export class CurrentScreen extends PureComponent {
         //     ...data[key]
         // }));
         // this.setState({eventsList: eventsData, loading:false});
-        await this.getCurrent();
+        await this.checkConnection();
+        NetInfo.fetch().then(state => {
+            if(state.isConnected){
+                this.getCurrent();
+            }
+            else {
+                const getData = async () => {
+                    try {
+                        const jsonValue = await AsyncStorage.getItem('@current')
+                        return jsonValue != null ? JSON.parse(jsonValue) : null;
+                    } catch(e) {
+                        // error reading value
+                    }
+                }
+                const dataLoaded = getData();
+                this.setState({eventsList: dataLoaded})
+            }
+        });
         console.log(data);
         //this.setState({eventsList: this.props.currentsList, loading:false});
     }
@@ -63,21 +79,36 @@ export class CurrentScreen extends PureComponent {
         //                 </View>
         //             </View>
         //         </Pressable>
-        return <TouchableOpacity onPress={() => this.props.navigation.push('Details', {event: item})}>
-            <CardItem
-            flex
-            borderless
-            safe
-            style={styles.card}
-            title={item.title}
-            caption={item.time}
-            location={item.type}
-            image={item.thumbnail}
+        return <TouchableRipple onPress={() => this.props.navigation.push('Details', {event: item})}
+                                rippleColor="rgba(0, 22.75, 43.92, .6)"
+                                underlayColor="rgba(0, 22.75, 43.92, .6)"
+        >
+            <EventItem
+                event={item}
         />
-        </TouchableOpacity>
+        </TouchableRipple>
     }
     onRefresh() {
         this.setState({refreshing: true},() => {this.getCurrent();});
+    }
+    async checkConnection(){
+        NetInfo.fetch().then(state => {
+            if(state.isConnected){
+               this.setState({connection: true})
+            }
+            else {
+                this.setState({connection: false});
+            }
+        });
+        const unsubscribe = NetInfo.addEventListener(state => {
+            if(state.isConnected){
+                this.setState({connection: true});
+                this.getCurrent();
+            }
+            else{
+                this.setState({connection: false});
+            }
+        });
     }
     async getCurrent(){
         let data = [];
@@ -90,10 +121,34 @@ export class CurrentScreen extends PureComponent {
             ...data[key]
         }));
         this.setState({eventsList: eventsData, loading: false, refreshing: false});
+        const storeData = async (eventsData) => {
+            try {
+                const jsonValue = JSON.stringify(eventsData)
+                await AsyncStorage.setItem('@current', jsonValue)
+            } catch (e) {
+                console.log("Something unexpected happened while saving to storage.");
+            }
+        }
+        await storeData(eventsData);
     }
     render() {
         if(!this.state.loading){
-            return (
+            return (<View>
+                    {
+                        this.state.connection !== true &&
+                        (
+                            <View
+                                style={{
+                                    backgroundColor: '#ff4040',
+                                    height: 32,
+                                    flexDirection: 'row',
+                                    }}
+                            >
+                                <IconButton disabled={false} icon='exclamation' size={24} color={Colors.white} style={{margin: -6, marginTop: -2, marginLeft: 10}}/>
+                                <Text style={{marginTop: 6, marginLeft: 10, color: Colors.white}}>Internet connection is not available.</Text>
+                            </View>
+                        )
+                    }
             <FlatList
                 ItemSeparatorComponent={
                     Platform.OS !== 'android' &&
@@ -110,8 +165,9 @@ export class CurrentScreen extends PureComponent {
                 onRefresh={() => this.onRefresh()}
                 refreshing={this.state.refreshing}
                 />
+                </View>
         )} else {
-        return <PlaceholderItem />
+        return <View><PlaceholderEvent /><PlaceholderEvent /><PlaceholderEvent /></View>
         }
     }
 };

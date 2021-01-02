@@ -1,9 +1,11 @@
-import React, {PureComponent} from 'react';
+import React, {PureComponent, Fragment} from 'react';
 import { View, StyleSheet, ScrollView, Platform, Image, Text } from 'react-native';
-import {Divider} from 'react-native-paper';
+import {Divider, Surface, FAB} from 'react-native-paper';
 import Carousel from 'react-native-snap-carousel';
 import moment from "moment";
 import {TouchableOpacity} from "react-native-web";
+import { scale, verticalScale, moderateScale, moderateVerticalScale } from 'react-native-size-matters';
+
 
 
 const scrollEnabled = Platform.select({ web: true, default: false });
@@ -45,46 +47,69 @@ export class DetailsScreen extends PureComponent {
     }
     render()
     {
-        let eventColor = "#27ae60";
-        if(this.event.type === "GO Battle League") eventColor = "#8e44ad";
-        else if(this.event.type === "Update") eventColor = "#2980b9";
-        else if(this.event.type === "Research Breakthrough") eventColor = "#795548";
-        else if(this.event.type === "Raid Battles") eventColor = "#c0392b";
-        else if(this.event.type === "Pokémon Spotlight Hour") eventColor = "#e58e26";
-        else if(this.event.type === "Raid Hour") eventColor = "#c0392b";
-        else if(this.event.type === "Community Day") eventColor = "#1660a9";
-        else if(this.event.type === "Special Research") eventColor = "#13a185";
+        // let eventColor = "#27ae60";
+        // if(this.event.type === "GO Battle League") eventColor = "#8e44ad";
+        // else if(this.event.type === "Update") eventColor = "#2980b9";
+        // else if(this.event.type === "Research Breakthrough") eventColor = "#795548";
+        // else if(this.event.type === "Raid Battles") eventColor = "#c0392b";
+        // else if(this.event.type === "Pokémon Spotlight Hour") eventColor = "#e58e26";
+        // else if(this.event.type === "Raid Hour") eventColor = "#c0392b";
+        // else if(this.event.type === "Community Day") eventColor = "#1660a9";
+        // else if(this.event.type === "Special Research") eventColor = "#13a185";
 
-        if (this.event.ISO_time){
-            this.event.start = moment(this.event.start).format("dddd, MMM DD at HH:mm a");
-            this.event.end = moment(this.event.end).format("dddd, MMM DD at HH:mm a");
-        }
+        // if (this.event.ISO_time){
+        //     this.event.start = moment(this.event.start).format("dddd, MMM DD [at] HH:mm a");
+        //     this.event.end = moment(this.event.end).format("dddd, MMM DD [at] HH:mm a");
+        // }
 
         return (
+            <Fragment>
+                <FAB
+                    style={{position: 'absolute',
+                        margin: 16,
+                        right: 0,
+                        bottom: 0,
+                        backgroundColor: "#003a70",
+                        elevation:4}}
+                    medium
+                    icon="bell" // bell  bell-off
+                    onPress={() => console.log('Pressed')}
+                />
                 <ScrollView>
+
                     <Image style={{width: '100%',
                         height: null,
                         aspectRatio: 2,}}
                            source={{uri: this.event.thumbnail}}/>
 
-                           <View style={{backgroundColor: eventColor}}><Text style={{color: "white", marginLeft: 12}} >{this.event.type}</Text></View>
-                    <View style={{marginLeft: 12, marginRight: 12}}>
-                    <Text style={{fontSize: 32}}>{this.event.title}</Text>
-                        <Text style={{fontWeight: 'bold'}}>Starts: </Text>
-                    <Text>  {this.event.start}</Text>
-                        <Text style={{fontWeight: 'bold'}}>Ends: </Text>
-                        <Text>  {this.event.end}</Text>
-                        <Divider style={{marginTop: 12}}/>
-                    <Text>{this.event.description}</Text>
-                        <Carousel
-                            ref={(c) => { this._carousel = c; }}
-                            data={this.event.images}
-                            renderItem={this._renderItem}
-                            sliderWidth={400}
-                            itemWidth={400}
-                        />
-                           </View>
+                           <View style={{backgroundColor: this.event.color}}>
+                               <Text style={{color: "white", marginLeft: 16,
+                                   textAlign: "center", marginRight: 16,}} >{this.event.type}</Text></View>
+
+                    <View style={{marginLeft: 16, marginRight: 16, marginBottom: verticalScale(30)}}>
+                        <Text style={{fontSize: verticalScale(24), fontWeight: 'bold', textAlign: "center"}}>{this.event.title}</Text>
+                            <Divider style={{marginTop: 12, marginBottom: 12}}/>
+                            <Text style={{fontWeight: 'bold'}}>Starts: </Text>
+                        <Text>{this.event.start}</Text>
+                            <Text style={{fontWeight: 'bold'}}>Ends: </Text>
+                            <Text>{this.event.end}</Text>
+                            <Divider style={{marginTop: 12, marginBottom: 12}}/>
+                            <View style={{alignContent: "center"}}>
+                                <Text style={{marginBottom: 12}}>{this.event.description}</Text>
+                                    {
+                                    this.event.graphics === true &&
+                                    (
+                                    <Carousel
+                                        ref={(c) => { this._carousel = c; }}
+                                        data={this.event.images}
+                                        renderItem={this._renderItem}
+                                        sliderWidth={400}
+                                        itemWidth={400}
+                                    />
+                                    )}
+                           </View></View>
                 </ScrollView>
+            </Fragment>
       );
     }
 }

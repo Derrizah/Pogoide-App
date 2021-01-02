@@ -1,4 +1,4 @@
-import React, {PureComponent} from 'react';
+import React, {PureComponent, Fragment} from 'react';
 import {
     Text,
     FlatList,
@@ -12,18 +12,26 @@ import images from './../../res/images';
 import ListItem from './ListItem';
 import DetailsScreen from './DetailsScreen';
 import {render} from "react-native-web";
-import {ActivityIndicator, IconButton, Colors, TouchableRipple} from "react-native-paper";
+import {ActivityIndicator, IconButton, Colors, TouchableRipple, FAB} from "react-native-paper";
 import firebase from 'firebase/app';
 import 'firebase/database';
 import {Platform} from "react-native-web";
 import NetInfo from "@react-native-community/netinfo";
 import EventItem, {PlaceholderEvent} from "./EventItem";
+import {showMessage} from "react-native-flash-message";
+import moment from "moment";
 
 export class CurrentScreen extends PureComponent {
     constructor(props) {
         super();
         console.log(props.route.params.db);
         this.db = props.route.params.db;
+        this.reverse = props.route.params.reverse;
+        // showMessage({
+        //     description: this.reverse.toString(),
+        //     duration: 6000,
+        //     height: "60%"
+        // })
         //this.events = list;
     }
     state = {
@@ -120,7 +128,17 @@ export class CurrentScreen extends PureComponent {
             key,
             ...data[key]
         }));
-        this.setState({eventsList: eventsData, loading: false, refreshing: false});
+        eventsData.map((event) => {
+            if(event.ISO_time){
+                event.start = moment(event.start).format("dddd, MMM DD [at] HH:mm a");
+                event.end = moment(event.end).format("dddd, MMM DD [at] HH:mm a");
+            }
+        });
+        this.setState({loading: false, refreshing: false});
+
+        if(this.reverse) this.setState({eventsList: eventsData.reverse()});
+        else this.setState({eventsList: eventsData});
+
         const storeData = async (eventsData) => {
             try {
                 const jsonValue = JSON.stringify(eventsData)
@@ -131,9 +149,24 @@ export class CurrentScreen extends PureComponent {
         }
         await storeData(eventsData);
     }
+
     render() {
         if(!this.state.loading){
-            return (<View>
+            return (<Fragment>
+                    <FAB
+                        style={{
+                            position: 'absolute',
+                            margin: 16,
+                            right: 0,
+                            bottom: 0,
+                            elevation: 3,
+                            zIndex: 1
+                        }}
+                        medium
+                        icon="sort"
+                        onPress={() => this.setState({reverse: !this.state.reverse})}
+                    />
+                    <View>
                     {
                         this.state.connection !== true &&
                         (
@@ -166,6 +199,7 @@ export class CurrentScreen extends PureComponent {
                 refreshing={this.state.refreshing}
                 />
                 </View>
+                </Fragment>
         )} else {
         return <View><PlaceholderEvent /><PlaceholderEvent /><PlaceholderEvent /></View>
         }

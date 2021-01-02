@@ -14,6 +14,9 @@ import {StatusBar, TouchableOpacity} from "react-native-web";
 import {createDrawerNavigator} from "@react-navigation/drawer";
 import {DrawerActions} from "@react-navigation/routers";
 import { Appbar } from 'react-native-paper';
+import {showMessage} from "react-native-flash-message";
+import changeNavigationBarColor from 'react-native-navigation-bar-color';
+import { scale, verticalScale, moderateScale } from 'react-native-size-matters';
 
 const RootDrawer = createDrawerNavigator();
 class DrawerStack extends PureComponent {
@@ -39,7 +42,7 @@ class TabStack extends PureComponent {
     //     // loading: true
     // }
     constructor(props) {
-        super(props);
+        super();
         const firebaseConfig = {
             apiKey: "AIzaSyAI3afaLzK3s8JLkIw3rC9oR93O68zd7zg",
             authDomain: "blcd-notify.firebaseapp.com",
@@ -54,7 +57,10 @@ class TabStack extends PureComponent {
             firebase.initializeApp(firebaseConfig);
         }
         this.db = firebase.database();
-        //const dbContext = React.createContext(firebase.database());
+        // this.reverse = props.route.params.reverse;
+
+
+
     }
 
     async componentDidMount() {
@@ -79,10 +85,31 @@ class TabStack extends PureComponent {
     // }   catch(err){
     //         console.log("Error fetching data---------", err);
     //     }
+        let data = [];
+        const current = this.db.ref('/alerts');
+        await current.once('value').then((snapshot) => {
+            data = snapshot.val();
+        })
+        const alertsData = Object.keys(data).map(key => ({
+            key,
+            ...data[key]
+        }));
+        showMessage({
+            message: alertsData[0].title,
+            description: alertsData[0].text,
+            type: alertsData[0].type,
+            position: alertsData[0].position,
+            autoHide: alertsData[0].autoHide,
+            icon: alertsData[0].icon,
+            backgroundColor: alertsData[0].bgColor,
+            style: {height: scale(80)},
+            duration: 5000,
+        });
+        this.reverse = props.route.params.reverse;
     }
     render() {
         return (
-            //<dbContext.Provider>
+            // <SortContext.Provider value={this.reverse}>
             <Tab.Navigator
                 tabBarOptions={{
                     activeTintColor: 'white',
@@ -92,20 +119,31 @@ class TabStack extends PureComponent {
                 }}
             >
                 <Tab.Screen name="Current" component={CurrentStackScreen} initialParams={{
-                    db: this.db
+                    db: this.db,
+                    reverse: this.reverse,
                 }} />
-                <Tab.Screen name="Upcoming" component={UpcomingStackScreen} />
+                <Tab.Screen name="Upcoming" component={UpcomingStackScreen} initialParams={{
+                    db: this.db,
+                    reverse: this.reverse,
+                }} />
             </Tab.Navigator>
-            //</dbContext.Provider>
+            // </SortContext.Provider>
         )
     }
 }
 
 class HomeScreen extends PureComponent {
+    constructor() {
+        super();
+        this.reverse = true;
+    }
+    resort(){
+        this.reverse = !this.reverse;
+    }
     render() {
         return (
             <RootStack.Navigator>
-                <RootStack.Screen name="HeaderTitle" component={TabStack}
+                <RootStack.Screen name="HeaderTitle" component={TabStack} initialParams={{reverse: this.reverse}}
                                   options={{
                                       header: ({ scene, previous, navigation }) => {
                                           const { options } = scene.descriptor;
@@ -121,7 +159,7 @@ class HomeScreen extends PureComponent {
                                               <Appbar.Header
                                                   style={{backgroundColor:"#003a70"}}>
                                                   <Appbar.Content title="Pogoide"/>
-                                                  <Appbar.Action icon="dots-vertical"/>
+                                                  <Appbar.Action icon="dots-vertical" onPress={() => this.resort()}/>
                                               </Appbar.Header>
                                           );
                                       },

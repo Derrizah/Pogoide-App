@@ -57,10 +57,6 @@ class TabStack extends PureComponent {
             firebase.initializeApp(firebaseConfig);
         }
         this.db = firebase.database();
-        // this.reverse = props.route.params.reverse;
-
-
-
     }
 
     async componentDidMount() {
@@ -105,7 +101,6 @@ class TabStack extends PureComponent {
             style: {height: scale(80)},
             duration: 5000,
         });
-        this.reverse = props.route.params.reverse;
     }
     render() {
         return (
@@ -119,12 +114,10 @@ class TabStack extends PureComponent {
                 }}
             >
                 <Tab.Screen name="Current" component={CurrentStackScreen} initialParams={{
-                    db: this.db,
-                    reverse: this.reverse,
+                    db: this.db
                 }} />
                 <Tab.Screen name="Upcoming" component={UpcomingStackScreen} initialParams={{
-                    db: this.db,
-                    reverse: this.reverse,
+                    db: this.db
                 }} />
             </Tab.Navigator>
             // </SortContext.Provider>
@@ -137,13 +130,10 @@ class HomeScreen extends PureComponent {
         super();
         this.reverse = true;
     }
-    resort(){
-        this.reverse = !this.reverse;
-    }
     render() {
         return (
             <RootStack.Navigator>
-                <RootStack.Screen name="HeaderTitle" component={TabStack} initialParams={{reverse: this.reverse}}
+                <RootStack.Screen name="HeaderTitle" component={TabStack}
                                   options={{
                                       header: ({ scene, previous, navigation }) => {
                                           const { options } = scene.descriptor;
@@ -159,7 +149,7 @@ class HomeScreen extends PureComponent {
                                               <Appbar.Header
                                                   style={{backgroundColor:"#003a70"}}>
                                                   <Appbar.Content title="Pogoide"/>
-                                                  <Appbar.Action icon="dots-vertical" onPress={() => this.resort()}/>
+                                                  <Appbar.Action icon="dots-vertical"/>
                                               </Appbar.Header>
                                           );
                                       },

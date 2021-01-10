@@ -11,6 +11,7 @@ import {name as appName} from './app.json';
 import MainNavigator from './src/containers/MainNavigator';
 import { NavigationContainer } from '@react-navigation/native';
 import FlashMessage from "react-native-flash-message";
+import {scale} from "react-native-size-matters";
 
 StatusBar.setBarStyle('light-content', true);
 StatusBar.backgroundColor = '#000';
@@ -24,7 +25,7 @@ const Root = () => <Fragment>
     <SafeAreaView style={{ flex: 0, backgroundColor: '#003a70' }} />
     <View style={{ flex: 1}}>
         <MainNavigator />
-        <FlashMessage position="bottom" />
+        <FlashMessage position="bottom" icon="info" backgroundColor="#003a70" style={{height: scale(60)}}/>
 </View>
 </Fragment>;
 //

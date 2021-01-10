@@ -5,7 +5,7 @@ import {
     View,
     StyleSheet,
     Image,
-    TouchableOpacity, Pressable, AsyncStorage
+    TouchableOpacity, Pressable
 } from 'react-native';
 import { createStackNavigator, TransitionPresets } from '@react-navigation/stack';
 import images from './../../res/images';
@@ -17,16 +17,27 @@ import firebase from 'firebase/app';
 import 'firebase/database';
 import {Platform} from "react-native-web";
 import NetInfo from "@react-native-community/netinfo";
-import EventItem, {PlaceholderEvent} from "./EventItem";
+import EventItem, {PlaceholderEvent, EventItemC} from "./EventItem";
 import {showMessage} from "react-native-flash-message";
 import moment from "moment";
+import {scale} from "react-native-size-matters";
+import AsyncStorage from '@react-native-async-storage/async-storage';
+
 
 export class CurrentScreen extends PureComponent {
     constructor(props) {
         super();
         console.log(props.route.params.db);
         this.db = props.route.params.db;
-        this.reverse = props.route.params.reverse;
+
+        const getData = async () => {
+            try {
+                const value = await AsyncStorage.getItem('@sort_option')
+                this.reverse = value !== 'true';
+            } catch(e) {
+                // error reading value
+            }
+        }
         // showMessage({
         //     description: this.reverse.toString(),
         //     duration: 6000,
@@ -87,17 +98,54 @@ export class CurrentScreen extends PureComponent {
         //                 </View>
         //             </View>
         //         </Pressable>
+        this.notifications = false;
+        const getData = () => AsyncStorage.getItem("@"+item.codename)
+            .then((result) => {
+                if (result === null) result = 'false';
+                this.notifications = (result === 'true');
+            });
+        getData();
+
         return <TouchableRipple onPress={() => this.props.navigation.push('Details', {event: item})}
                                 rippleColor="rgba(0, 22.75, 43.92, .6)"
                                 underlayColor="rgba(0, 22.75, 43.92, .6)"
         >
-            <EventItem
+            {/*<EventItem*/}
+            {/*    event={item}*/}
+            {/*    buttonIcon={icon}*/}
+            {/*/>*/}
+            <EventItemC
+                itemType={""}
                 event={item}
-        />
+                notifications={this.notifications}
+            />
         </TouchableRipple>
     }
     onRefresh() {
         this.setState({refreshing: true},() => {this.getCurrent();});
+    }
+    resort() {
+        this.reverse = !this.reverse;
+        const storeData = async () => {
+            try {
+                await AsyncStorage.setItem('@sort_option', this.reverse.toString())
+            } catch (e) {
+                // saving error
+            }
+        }
+        this.getCurrent();
+        if(this.reverse) {
+            showMessage({
+                message: "Events ordered from oldest to newest",
+                backgroundColor: "#003a70",
+            });
+        }
+        else {
+            showMessage({
+                message: "Events ordered from newest to oldest",
+                backgroundColor: "#003a70",
+            });
+        }
     }
     async checkConnection(){
         NetInfo.fetch().then(state => {
@@ -134,11 +182,12 @@ export class CurrentScreen extends PureComponent {
                 event.end = moment(event.end).format("dddd, MMM DD [at] HH:mm a");
             }
         });
-        this.setState({loading: false, refreshing: false});
-
-        if(this.reverse) this.setState({eventsList: eventsData.reverse()});
-        else this.setState({eventsList: eventsData});
-
+        if(this.reverse) {
+            this.setState({eventsList: eventsData.reverse(), loading: false, refreshing: false});
+        }
+        else {
+            this.setState({eventsList: eventsData, loading: false, refreshing: false});
+        }
         const storeData = async (eventsData) => {
             try {
                 const jsonValue = JSON.stringify(eventsData)
@@ -159,14 +208,15 @@ export class CurrentScreen extends PureComponent {
                             margin: 16,
                             right: 0,
                             bottom: 0,
-                            elevation: 3,
+                            backgroundColor: "#003a70",
                             zIndex: 1
                         }}
                         medium
                         icon="sort"
-                        onPress={() => this.setState({reverse: !this.state.reverse})}
+                        onPress={() => this.resort()}
                     />
-                    <View>
+                    <View style={{
+                        marginBottom: 12}}>
                     {
                         this.state.connection !== true &&
                         (

@@ -17,7 +17,7 @@ import firebase from 'firebase/app';
 import 'firebase/database';
 import {Platform} from "react-native-web";
 import NetInfo from "@react-native-community/netinfo";
-import EventItem, {PlaceholderEvent} from "./EventItem";
+import EventItem, {EventItemC, PlaceholderEvent} from "./EventItem";
 
 export class UpcomingScreen extends PureComponent {
     constructor(props) {
@@ -83,7 +83,8 @@ export class UpcomingScreen extends PureComponent {
                                 rippleColor="rgba(0, 22.75, 43.92, .6)"
                                 underlayColor="rgba(0, 22.75, 43.92, .6)"
         >
-            <EventItem
+            <EventItemC
+                itemType={""}
                 event={item}
             />
         </TouchableRipple>

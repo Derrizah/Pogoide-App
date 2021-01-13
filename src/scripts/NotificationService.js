@@ -1,15 +1,17 @@
 import PushNotification from 'react-native-push-notification';
 import NotificationHandler from './NotificationHandler';
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import {EventStartNotificationSettings, UpcomingEventNotificationSettings} from "./NotificationSettings";
 
 export default class NotificationService {
-    constructor(onRegister, onNotification) {
+    constructor() {
         this.lastId = 0;
         this.lastChannelCounter = 0;
 
         this.createDefaultChannels();
 
-        NotificationHandler.attachRegister(onRegister);
-        NotificationHandler.attachNotification(onNotification);
+        // NotificationHandler.attachRegister(onRegister);
+        // NotificationHandler.attachNotification(onNotification);
 
         // Clear badge number at start
         PushNotification.getApplicationIconBadgeNumber(function (number) {
@@ -21,6 +23,38 @@ export default class NotificationService {
         PushNotification.getChannels(function(channels) {
             console.log(channels);
         });
+    }
+
+    create(title, codename, date) {
+        this.startNotifSettings = new EventStartNotificationSettings(codename, date);
+        this.startNotifSettings.setTitleMessage(title, "Just started!");
+        this.soonNotifSettings = new UpcomingEventNotificationSettings(codename, date);
+        this.soonNotifSettings.setTitleMessage(title, "Starting soon!");
+    }
+
+    toggleEventNotifications() {
+        this.toggleNotification(this.startNotifSettings);
+        this.toggleNotification(this.soonNotifSettings);
+    }
+
+    toggleNotification(settings) {
+        const status = AsyncStorage.getItem("@" + settings.Id + "_notif");
+        if(status === "true") {
+            this.cancelNotification();
+            AsyncStorage.setItem("@" + settings.Id + "_notif", "disabled");
+        }
+        else {
+            this.scheduleNotification(settings);
+            AsyncStorage.setItem("@" + settings.Id + "_notif", "enabled");
+        }
+    }
+
+    scheduleNotification(settings) {
+        PushNotification.localNotificationSchedule(settings.asDict());
+    }
+
+    cancelNotification(id) {
+        PushNotification.cancelLocalNotifications({id: id});
     }
 
     createDefaultChannels() {

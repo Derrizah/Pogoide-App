@@ -77,7 +77,7 @@ export class CurrentScreen extends PureComponent {
                     }
                 }
                 const dataLoaded = getData();
-                this.setState({eventsList: dataLoaded})
+                this.setState({eventsList: dataLoaded});
             }
         });
         console.log(data);
@@ -106,7 +106,7 @@ export class CurrentScreen extends PureComponent {
             });
         getData();
 
-        return <TouchableRipple onPress={() => this.props.navigation.push('Details', {event: item})}
+        return <TouchableRipple onPress={() => this.props.navigation.push('Details', {event: item, eventType: "current"})}
                                 rippleColor="rgba(0, 22.75, 43.92, .6)"
                                 underlayColor="rgba(0, 22.75, 43.92, .6)"
         >

@@ -4,6 +4,7 @@ import { NavigationContainer } from '@react-navigation/native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import UpcomingStackScreen from './main/UpcomingStackScreen'
 import CurrentStackScreen from './main/CurrentStackScreen'
+import SettingsScreen from './main/SettingsScreen'
 import {createMaterialTopTabNavigator} from "@react-navigation/material-top-tabs";
 import {StyleSheet, Text, View} from "react-native";
 import palette from "../res/palette";
@@ -128,7 +129,7 @@ class TabStack extends PureComponent {
 class HomeScreen extends PureComponent {
     constructor() {
         super();
-        this.reverse = true;
+        // this.reverse = true;
     }
     render() {
         return (
@@ -149,11 +150,13 @@ class HomeScreen extends PureComponent {
                                               <Appbar.Header
                                                   style={{backgroundColor:"#003a70"}}>
                                                   <Appbar.Content title="Pogoide"/>
-                                                  <Appbar.Action icon="dots-vertical"/>
+                                                  <Appbar.Action icon="settings" onPress={() => navigation.navigate('SettingsTitle')}/>
+                                                  {/*<Appbar.Action icon="settings" onPress={() => navigation.navigate}/>*/}
                                               </Appbar.Header>
                                           );
                                       },
                                   }}/>
+                <RootStack.Screen name="SettingsTitle" component={SettingsScreen}/>
             </RootStack.Navigator>
         );
     }

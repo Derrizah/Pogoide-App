@@ -1,12 +1,13 @@
 import React, {PureComponent, Fragment} from 'react';
 import {View, StyleSheet, ScrollView, Platform, Image, Text} from 'react-native';
-import {Divider, Surface, FAB} from 'react-native-paper';
+import {Divider, Surface, FAB, Button} from 'react-native-paper';
 import Carousel from 'react-native-snap-carousel';
 import moment from "moment";
 import {TouchableOpacity} from "react-native-web";
 import { scale, verticalScale, moderateScale, moderateVerticalScale } from 'react-native-size-matters';
 import HTML from "react-native-render-html";
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import NotificationService from "../../scripts/NotificationService";
 
 
 
@@ -16,22 +17,26 @@ const scrollEnabled = Platform.select({ web: true, default: false });
 // {route.params.type && <Text>{route.params.type}</Text>}
 
 export class DetailsScreen extends PureComponent {
-  constructor(props) {
-    super();
-    this.event = props.route.params.event;
-    // console.log("following is on details screen");
-    // console.log(props.route.params);
-    // this.navigator = props.route.navigator;
-    this.storageKey = "@" + this.event.codename;
-  }
-  state={
+    constructor(props) {
+        super();
+        this.event = props.route.params.event;
+        this.itemType =props.route.params.eventType;
+        // console.log("following is on details screen");
+        // console.log(props.route.params);
+        // this.navigator = props.route.navigator;
+        this.storageKey = "@" + this.event.codename;
+
+        this.notif = new NotificationService();
+        this.notif.create(this.event.title, this.event.codename, this.event.start);
+    }
+    state={
       isSubscribed: false,
       fabIcon: "bell",
-  }
-  componentDidMount() {
+    }
+    componentDidMount() {
       AsyncStorage.getItem(this.storageKey)
           .then((result)=>this.setState({isSubscribed: (result === 'true'), fabIcon: (result === 'true') ? "bell" : "bell-off"}));
-  }
+    }
 
     _renderItem = ({item, index}) => {
         return (
@@ -42,22 +47,11 @@ export class DetailsScreen extends PureComponent {
             </View>
         );
     }
-    _renderFull() {
-      let visible = true
-        console.log('no fullscreen?')
-      // return (
-      //     // <ImageView
-      //     //     images={this.event.images}
-      //     //     imageIndex={0}
-      //     //     visible={visible}
-      //     //     onRequestClose={() => visible = false}
-      //     // />
-      // )
-    }
     toggleSubscription()
     {
         const nextStatus = (!this.state.isSubscribed).toString();
         let fabIcon = "bell";
+        this.notif.toggleNotification()
         AsyncStorage.setItem(this.storageKey, nextStatus).then(
             () => this.setState({isSubscribed: (nextStatus === 'true'), fabIcon: (nextStatus === 'true') ? "bell" : "bell-off"})
         );
@@ -81,17 +75,21 @@ export class DetailsScreen extends PureComponent {
 
         return (
             <Fragment>
-                <FAB
-                    style={{position: 'absolute',
-                        margin: 16,
-                        right: 0,
-                        bottom: 0,
-                        backgroundColor: "#003a70",
-                        elevation:4,
-                    zIndex: 1}}
-                    medium
-                    icon={this.state.fabIcon} // bell  bell-off
-                    onPress={() => this.toggleSubscription()}/>
+                {
+                this.itemType === 'upcoming' &&
+                (
+                    <FAB
+                        style={{position: 'absolute',
+                            margin: 16,
+                            right: 0,
+                            bottom: 0,
+                            backgroundColor: "#003a70",
+                            elevation:4,
+                            zIndex: 1}}
+                        medium
+                        icon={this.state.fabIcon} // bell  bell-off
+                        onPress={() => this.toggleSubscription()}/>
+                )}
                 <ScrollView>
                     <Image style={{width: '100%',
                         height: null,

@@ -66,12 +66,12 @@ export async function togglePushNotification(title, codename, date){
         });
 
         let soonDate;
-        await AsyncStorage.getItem("@daysBefore")
+        await AsyncStorage.getItem("@soonDays")
             .then((result) => {
                 soonDate = moment(date).subtract(parseInt(result), 'days').toDate();
             })
             .catch(err => {
-                console.log("Could not get daysBefore from async storage.");
+                console.log("Could not get soonDays from async storage.");
                soonDate =  moment(date).subtract(5, 'days').toDate();
             });
             if(soonDate > Date.now()) {

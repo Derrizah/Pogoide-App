@@ -6,13 +6,22 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 export default class SettingsScreen extends PureComponent {
     constructor(props) {
         super();
+        this.state = {
+            soonNotifyDays: "5",
+            isAllSwitchOn: false,
+            isStartSwitchOn: false,
+            isSoonSwitchOn: false,
+        }
+        this.onToggleAllSwitch = this.onToggleAllSwitch.bind(this);
+        this.onToggleStartSwitch = this.onToggleStartSwitch.bind(this);
+        this.onToggleSoonSwitch = this.onToggleSoonSwitch.bind(this);
     }
-    state = {
-        soonNotifyDays: "5",
-        isAllSwitchOn: false,
-        isStartSwitchOn: false,
-        isSoonSwitchOn: false,
-    }
+    // state = {
+    //     soonNotifyDays: "5",
+    //     isAllSwitchOn: false,
+    //     isStartSwitchOn: false,
+    //     isSoonSwitchOn: false,
+    // }
     componentDidMount() {
         AsyncStorage.getItem("@allDisabled")
             .then((result)=>this.setState({isAllSwitchOn: result}));
@@ -21,18 +30,18 @@ export default class SettingsScreen extends PureComponent {
         AsyncStorage.getItem("@soonDisabled")
             .then((result)=>this.setState({isSoonSwitchOn: result}));
     }
-    async onToggleAllSwitch() {
-        await AsyncStorage.setItem("@allDisabled", !this.state.isAllSwitchOn).then(
+    onToggleAllSwitch() {
+        AsyncStorage.setItem("@allDisabled", (!this.state.isAllSwitchOn).toString()).then(
             () => this.setState({isAllSwitchOn: !this.state.isAllSwitchOn})
-        );
+        ).catch(err => console.log("Toggle all errored"));
     }
-    async onToggleStartSwitch() {
-        await AsyncStorage.setItem("@startDisabled", !this.state.isStartSwitchOn).then(
+    onToggleStartSwitch() {
+        AsyncStorage.setItem("@startDisabled", (!this.state.isStartSwitchOn).toString()).then(
             () => this.setState({isStartSwitchOn: !this.state.isStartSwitchOn})
         );
     }
-    async onToggleSoonSwitch() {
-        await AsyncStorage.setItem("@soonDisabled", !this.state.isSoonSwitchOn).then(
+    onToggleSoonSwitch() {
+        AsyncStorage.setItem("@soonDisabled", (!this.state.isSoonSwitchOn).toString()).then(
             () => this.setState({isSoonSwitchOn: !this.state.isSoonSwitchOn})
         );
     }
@@ -48,19 +57,21 @@ export default class SettingsScreen extends PureComponent {
                     title="Disable All Notifications"
                     description="You will have to opt-in to the events again."
                     right={props => <Switch value={this.state.isAllSwitchOn} onValueChange={this.onToggleAllSwitch}
-                                            style={{transform: [{ scaleX: .8 }, { scaleY: .8 }]}} />}
+                                            color={"#003a70"} style={{transform: [{ scaleX: .8 }, { scaleY: .8 }]}} />}
                     titleStyle={{color: 'red'}}
                 />
                 <List.Item
                     title="Disable Event Start Notifications"
-                    right={props => <Switch value={this.state.isStartSwitchOn || this.state.isAllSwitchOn} onValueChange={this.onToggleStartSwitch}
-                                            disabled={this.state.isAllSwitchOn} style={{transform: [{ scaleX: .8 }, { scaleY: .8 }]}} />}
+                    right={props => <Switch value={this.state.isStartSwitchOn} onValueChange={this.onToggleStartSwitch}
+                                            disabled={this.state.isAllSwitchOn} color={"#003a70"}
+                                            style={{transform: [{ scaleX: .8 }, { scaleY: .8 }]}} />}
                     style={{opacity: this.state.isAllSwitchOn ? 0.5 : 1}}
                 />
                 <List.Item
                     title="Disable Event Soon Notifications"
-                    right={props => <Switch value={this.state.isSoonSwitchOn || this.state.isAllSwitchOn} onValueChange={this.onToggleSoonSwitch}
-                                            disabled={this.state.isAllSwitchOn} style={{transform: [{ scaleX: .8 }, { scaleY: .8 }]}} />}
+                    right={props => <Switch value={this.state.isSoonSwitchOn} onValueChange={this.onToggleSoonSwitch}
+                                            disabled={this.state.isAllSwitchOn} color={"#003a70"}
+                                            style={{transform: [{ scaleX: .8 }, { scaleY: .8 }]}} />}
                     style={{opacity: this.state.isAllSwitchOn ? 0.5 : 1}}
                 />
                 <List.Item

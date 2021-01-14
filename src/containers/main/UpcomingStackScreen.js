@@ -1,28 +1,32 @@
-import React, {PureComponent} from 'react';
+import React, {PureComponent, Fragment} from 'react';
 import {
     Text,
     FlatList,
     View,
     StyleSheet,
     Image,
-    TouchableOpacity, Pressable, AsyncStorage
+    TouchableOpacity, Pressable
 } from 'react-native';
 import { createStackNavigator, TransitionPresets } from '@react-navigation/stack';
 import images from './../../res/images';
 import ListItem from './ListItem';
 import DetailsScreen from './DetailsScreen';
 import {render} from "react-native-web";
-import {ActivityIndicator, IconButton, Colors, TouchableRipple} from "react-native-paper";
+import {ActivityIndicator, IconButton, Colors, TouchableRipple, FAB} from "react-native-paper";
 import firebase from 'firebase/app';
 import 'firebase/database';
 import {Platform} from "react-native-web";
 import NetInfo from "@react-native-community/netinfo";
 import EventItem, {EventItemC, PlaceholderEvent} from "./EventItem";
+import {showMessage} from "react-native-flash-message";
+import moment from "moment";
+import {scale} from "react-native-size-matters";
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export class UpcomingScreen extends PureComponent {
     constructor(props) {
         super();
-        console.log(props.route.params.db);
+        // console.log(props.route.params.db);
         this.db = props.route.params.db;
         //this.events = list;
     }
@@ -43,6 +47,9 @@ export class UpcomingScreen extends PureComponent {
         //     ...data[key]
         // }));
         // this.setState({eventsList: eventsData, loading:false});
+        await AsyncStorage.getItem('@sort_option')
+            .then((result) => this.reverse = result)
+            .catch(err => console.log("Could not get sorting option in current screen"));
         await this.checkConnection();
         NetInfo.fetch().then(state => {
             if(state.isConnected){
@@ -79,18 +86,45 @@ export class UpcomingScreen extends PureComponent {
         //                 </View>
         //             </View>
         //         </Pressable>
-        return <TouchableRipple onPress={() => this.props.navigation.push('Details', {event: item})}
+        this.notifications = false;
+        AsyncStorage.getItem("@"+item.codename)
+            .then((result) => {
+                if (result === null) result = 'false';
+                this.notifications = (result === 'true');
+            })
+            .catch(err => this.notifications = "false");
+
+        return <TouchableRipple onPress={() => this.props.navigation.push('Details', {event: item, eventType: "upcoming"})}
                                 rippleColor="rgba(0, 22.75, 43.92, .6)"
                                 underlayColor="rgba(0, 22.75, 43.92, .6)"
         >
             <EventItemC
                 itemType={""}
                 event={item}
+                notifications={this.notifications}
             />
         </TouchableRipple>
     }
     onRefresh() {
-        this.setState({refreshing: true},() => {this.getUpcoming();});
+        this.setState({refreshing: true},async () => {await this.getUpcoming();});
+    }
+    async resort() {
+        this.reverse = !this.reverse;
+        await AsyncStorage.setItem('@sort_option', this.reverse.toString())
+            .catch(err => console.log("Error while storing sort option in current screen."));
+        await this.getUpcoming();
+        if(this.reverse) {
+            showMessage({
+                message: "Events ordered from oldest to newest",
+                backgroundColor: "#003a70",
+            });
+        }
+        else {
+            showMessage({
+                message: "Events ordered from newest to oldest",
+                backgroundColor: "#003a70",
+            });
+        }
     }
     async checkConnection(){
         NetInfo.fetch().then(state => {
@@ -121,11 +155,22 @@ export class UpcomingScreen extends PureComponent {
             key,
             ...data[key]
         }));
-        this.setState({eventsList: eventsData, loading: false, refreshing: false});
+        eventsData.map((event) => {
+            if(event.ISO_time){
+                event.start = moment(event.start).format("dddd, MMM DD[, at] HH:mm A");
+                event.end = moment(event.end).format("dddd, MMM DD[, at] HH:mm A");
+            }
+        });
+        if(this.reverse) {
+            this.setState({eventsList: eventsData.reverse(), loading: false, refreshing: false});
+        }
+        else {
+            this.setState({eventsList: eventsData, loading: false, refreshing: false});
+        }
         const storeData = async (eventsData) => {
             try {
                 const jsonValue = JSON.stringify(eventsData)
-                await AsyncStorage.setItem('@upcoming', jsonValue)
+                await AsyncStorage.setItem('@current', jsonValue)
             } catch (e) {
                 console.log("Something unexpected happened while saving to storage.");
             }
@@ -134,44 +179,60 @@ export class UpcomingScreen extends PureComponent {
     }
     render() {
         if(!this.state.loading){
-            return (<View>
-                    {
-                        this.state.connection !== true &&
-                        (
-                            <View
-                                style={{
-                                    backgroundColor: '#ff4040',
-                                    height: 32,
-                                    flexDirection: 'row',
-                                }}
-                            >
-                                <IconButton disabled={false} icon='exclamation' size={24} color={Colors.white} style={{margin: -6, marginTop: -2, marginLeft: 10}}/>
-                                <Text style={{marginTop: 6, marginLeft: 10, color: Colors.white}}>Internet connection is not available.</Text>
-                            </View>
-                        )
-                    }
-                    <FlatList
-                        ItemSeparatorComponent={
-                            Platform.OS !== 'android' &&
-                            (({ highlighted }) => (
-                                <View
-                                    style={[
-                                        highlighted && { marginLeft: 0 }
-                                    ]}
-                                />
-                            ))
-                        }
-                        data={this.state.eventsList}
-                        renderItem={({item}) => this.renderItem(item)}
-                        onRefresh={() => this.onRefresh()}
-                        refreshing={this.state.refreshing}
+            return (<Fragment>
+                    <FAB
+                        style={{
+                            position: 'absolute',
+                            margin: 16,
+                            right: 0,
+                            bottom: 0,
+                            backgroundColor: "#003a70",
+                            zIndex: 1
+                        }}
+                        medium
+                        icon="sort"
+                        onPress={async () => await this.resort()}
                     />
-                </View>
+                    <View style={{
+                        marginBottom: 12}}>
+                        {
+                            this.state.connection !== true &&
+                            (
+                                <View
+                                    style={{
+                                        backgroundColor: '#ff4040',
+                                        height: 32,
+                                        flexDirection: 'row',
+                                    }}
+                                >
+                                    <IconButton disabled={false} icon='exclamation' size={24} color={Colors.white} style={{margin: -6, marginTop: -2, marginLeft: 10}}/>
+                                    <Text style={{marginTop: 6, marginLeft: 10, color: Colors.white}}>Internet connection is not available.</Text>
+                                </View>
+                            )
+                        }
+                        <FlatList
+                            ItemSeparatorComponent={
+                                Platform.OS !== 'android' &&
+                                (({ highlighted }) => (
+                                    <View
+                                        style={[
+                                            highlighted && { marginLeft: 0 }
+                                        ]}
+                                    />
+                                ))
+                            }
+                            data={this.state.eventsList}
+                            renderItem={({item}) => this.renderItem(item)}
+                            onRefresh={() => this.onRefresh()}
+                            refreshing={this.state.refreshing}
+                        />
+                    </View>
+                </Fragment>
             )} else {
             return <View><PlaceholderEvent /><PlaceholderEvent /><PlaceholderEvent /></View>
         }
     }
-};
+}
 
 //   const events = {
 //       0: {

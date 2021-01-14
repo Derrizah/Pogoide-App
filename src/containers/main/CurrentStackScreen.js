@@ -27,17 +27,17 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 export class CurrentScreen extends PureComponent {
     constructor(props) {
         super();
-        console.log(props.route.params.db);
+        // console.log(props.route.params.db);
         this.db = props.route.params.db;
 
-        const getData = async () => {
-            try {
-                const value = await AsyncStorage.getItem('@sort_option')
-                this.reverse = value !== 'true';
-            } catch(e) {
-                // error reading value
-            }
-        }
+        // const getData = async () => {
+        //     try {
+        //         const value = await AsyncStorage.getItem('@sort_option')
+        //         this.reverse = value !== 'true';
+        //     } catch(e) {
+        //         // error reading value
+        //     }
+        // }
         // showMessage({
         //     description: this.reverse.toString(),
         //     duration: 6000,
@@ -62,6 +62,9 @@ export class CurrentScreen extends PureComponent {
         //     ...data[key]
         // }));
         // this.setState({eventsList: eventsData, loading:false});
+        await AsyncStorage.getItem('@sort_option')
+            .then((result) => this.reverse = result)
+            .catch(err => console.log("Could not get sorting option in current screen"));
         await this.checkConnection();
         NetInfo.fetch().then(state => {
             if(state.isConnected){
@@ -99,12 +102,12 @@ export class CurrentScreen extends PureComponent {
         //             </View>
         //         </Pressable>
         this.notifications = false;
-        const getData = () => AsyncStorage.getItem("@"+item.codename)
+        AsyncStorage.getItem("@"+item.codename)
             .then((result) => {
                 if (result === null) result = 'false';
                 this.notifications = (result === 'true');
-            });
-        getData();
+            })
+            .catch(err => this.notifications = "false");
 
         return <TouchableRipple onPress={() => this.props.navigation.push('Details', {event: item, eventType: "current"})}
                                 rippleColor="rgba(0, 22.75, 43.92, .6)"
@@ -122,18 +125,13 @@ export class CurrentScreen extends PureComponent {
         </TouchableRipple>
     }
     onRefresh() {
-        this.setState({refreshing: true},() => {this.getCurrent();});
+        this.setState({refreshing: true},async () => {await this.getCurrent();});
     }
-    resort() {
+    async resort() {
         this.reverse = !this.reverse;
-        const storeData = async () => {
-            try {
-                await AsyncStorage.setItem('@sort_option', this.reverse.toString())
-            } catch (e) {
-                // saving error
-            }
-        }
-        this.getCurrent();
+        await AsyncStorage.setItem('@sort_option', this.reverse.toString())
+            .catch(err => console.log("Error while storing sort option in current screen."));
+        await this.getCurrent();
         if(this.reverse) {
             showMessage({
                 message: "Events ordered from oldest to newest",
@@ -178,8 +176,8 @@ export class CurrentScreen extends PureComponent {
         }));
         eventsData.map((event) => {
             if(event.ISO_time){
-                event.start = moment(event.start).format("dddd, MMM DD [at] HH:mm a");
-                event.end = moment(event.end).format("dddd, MMM DD [at] HH:mm a");
+                event.start = moment(event.start).format("dddd, MMM DD[, at] HH:mm A");
+                event.end = moment(event.end).format("dddd, MMM DD[, at] HH:mm A");
             }
         });
         if(this.reverse) {
@@ -213,7 +211,7 @@ export class CurrentScreen extends PureComponent {
                         }}
                         medium
                         icon="sort"
-                        onPress={() => this.resort()}
+                        onPress={async () => await this.resort()}
                     />
                     <View style={{
                         marginBottom: 12}}>
@@ -254,7 +252,7 @@ export class CurrentScreen extends PureComponent {
         return <View><PlaceholderEvent /><PlaceholderEvent /><PlaceholderEvent /></View>
         }
     }
-};
+}
 
 //   const events = {
 //       0: {
@@ -337,6 +335,6 @@ export default class CurrentStackScreen extends PureComponent {
 
 const styles = StyleSheet.create({
     card: {marginTop: 4, marginBottom: 8, marginRight: 6, marginLeft: 6},
-  headerLogo: { marginLeft: 10, height: 30, width: 80, resizeMode: 'center' },
-  headerRightText: { marginRight: 10, height: 30},
+    headerLogo: { marginLeft: 10, height: 30, width: 80, resizeMode: 'center' },
+    headerRightText: { marginRight: 10, height: 30},
 });

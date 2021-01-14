@@ -7,8 +7,7 @@ import {TouchableOpacity} from "react-native-web";
 import { scale, verticalScale, moderateScale, moderateVerticalScale } from 'react-native-size-matters';
 import HTML from "react-native-render-html";
 import AsyncStorage from '@react-native-async-storage/async-storage';
-// import NotificationService from "../../scripts/NotificationService";
-
+import {togglePushNotification} from '../../scripts/NotificationsHandler'
 
 
 const scrollEnabled = Platform.select({ web: true, default: false });
@@ -52,9 +51,10 @@ export class DetailsScreen extends PureComponent {
         const nextStatus = (!this.state.isSubscribed).toString();
         let fabIcon = "bell";
         // this.notif.toggleNotification()
-        AsyncStorage.setItem(this.storageKey, nextStatus).then(
+        await AsyncStorage.setItem(this.storageKey, nextStatus).then(
             () => this.setState({isSubscribed: (nextStatus === 'true'), fabIcon: (nextStatus === 'true') ? "bell" : "bell-off"})
         );
+        await togglePushNotification(this.event.title, this.event.codename, this.event.start);
     }
     render()
     {

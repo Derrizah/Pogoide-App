@@ -2,6 +2,7 @@ import * as Notifications from 'expo-notifications';
 import Constants from 'expo-constants';
 import {Platform} from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import moment from "moment";
 
 export async function schedulePushNotification() {
     await Notifications.scheduleNotificationAsync({
@@ -14,36 +15,119 @@ export async function schedulePushNotification() {
     });
 }
 
-export async function togglePushNotification(title, codename){
+export async function togglePushNotification(title, codename, date){
     let subscriptionStatus;
+
+    // Prepping identifiers
     let soonNotifId = codename + "1";
     let startNotifId = codename + "2";
+
     await AsyncStorage.getItem("@" + codename)
-        .then((result)=> result = subscriptionStatus);
-    if(result === "true") {
-        await AsyncStorage.setItem("@" + codename, "false");
+        .then((result) => subscriptionStatus = result);
+
+    if(subscriptionStatus === "true") {
+        await AsyncStorage.setItem("@" + codename, "false")
+            .catch(err => {
+                console.log("Subscription status saving error");
+            });
         await Notifications.cancelScheduledNotificationAsync(soonNotifId);
         await Notifications.cancelScheduledNotificationAsync(startNotifId);
     }
     else {
-        const startTitle = "An event will start soon!";
-        const startSubtitle = "Upcoming Event";
-        const startBodyPostfix = " is starting soon. Open the app to see the details.";
-        if(Platform.OS === "ios") {
-            await Notifications.scheduleNotificationAsync({
-                identifier: soonNotifId,
-                content: {
-                    title: startTitle,
-                    subtitle: startSubtitle,
-                    body: title + startBodyPostfix,
-                }
+        // Notification Strings
+        const soonTitle = "An event will start soon! 📅";
+        const soonSubtitle = "Upcoming Event";
+        const soonBodyPostfix = " is starting soon. Open the app for details.";
 
+        const startTitle = "An event has started! 🕹️";
+        const startSubtitle = "Active Event";
+        const startBodyPostfix = " has started. Open the app for details.";
+
+        // Date and Time Parameters
+        const dateObject = moment(date, "dddd, MMM DD[, at] HH:mm A");
+        const year = moment(dateObject).year();
+        const month = moment(dateObject).month();
+        const day = moment(dateObject).day();
+        const hour = moment(dateObject).hour();
+        const minute= moment(dateObject).minute();
+
+        const startDate = moment(dateObject).toDate();
+
+        await Notifications.scheduleNotificationAsync({
+            identifier: startNotifId,
+            content: {
+                title: startTitle,
+                subtitle: startSubtitle,
+                body: title + startBodyPostfix,
+            },
+            trigger: {
+                channelId: "start-channel",
+                date: startDate},
+        });
+
+        let soonDate;
+        await AsyncStorage.getItem("@daysBefore")
+            .then((result) => {
+                soonDate = moment(date).subtract(parseInt(result), 'days').toDate();
+            })
+            .catch(err => {
+                console.log("Could not get daysBefore from async storage.");
+               soonDate =  moment(date).subtract(5, 'days').toDate();
             });
+            if(soonDate > Date.now()) {
+                await Notifications.scheduleNotificationAsync({
+                    identifier: soonNotifId,
+                    content: {
+                        title: soonTitle,
+                        subtitle: soonSubtitle,
+                        body: title + soonBodyPostfix,
+                    },
+                    trigger: {
+                        channelId: "soon-channel",
+                        date: soonDate,
+                    }
+                });
+            }
         }
-        else if(Platform.OS === "android") {
+        console.log("Notification should be set.");
 
-        }
-    }
+
+        // if(Platform.OS === "ios") {
+        //     await Notifications.scheduleNotificationAsync({
+        //         identifier: soonNotifId,
+        //         content: {
+        //             title: startTitle,
+        //             subtitle: startSubtitle,
+        //             body: title + startBodyPostfix,
+        //         },
+        //         trigger: {
+        //             type:'calendar',
+        //             repeats: false,
+        //             dateComponents: {
+        //                 year: year,
+        //                 month: month,
+        //                 day: day,
+        //                 hour: hour,
+        //                 minute: minute,
+        //             },
+        //         }
+        //     });
+        // }
+        // else if(Platform.OS === "android") {
+        //
+        //     await Notifications.scheduleNotificationAsync({
+        //         identifier: soonNotifId,
+        //         content: {
+        //             title: startTitle,
+        //             subtitle: startSubtitle,
+        //             body: title + startBodyPostfix,
+        //         },
+        //         trigger: {
+        //
+        //         },
+        //     });
+        // }
+    // }
 }
 
 export async function registerForPushNotificationsAsync() {

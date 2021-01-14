@@ -18,6 +18,7 @@ import { Appbar } from 'react-native-paper';
 import {showMessage} from "react-native-flash-message";
 import changeNavigationBarColor from 'react-native-navigation-bar-color';
 import { scale, verticalScale, moderateScale } from 'react-native-size-matters';
+import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
 
 const RootDrawer = createDrawerNavigator();
 class DrawerStack extends PureComponent {
@@ -191,7 +192,14 @@ export default function MainNavigator() {
                                           );
                                       },
                                   }}/>
-                <RootStack.Screen name="Settings" component={SettingsScreen}/>
+                <RootStack.Screen name="Settings" component={SettingsScreen}
+                                  options={{
+                                      headerStyle: {
+                                          backgroundColor: '#003a70',
+                                      },
+                                      headerTintColor: "#FFFFFF",
+                                  }}
+                                      />
             </RootStack.Navigator>
         </NavigationContainer>
     );

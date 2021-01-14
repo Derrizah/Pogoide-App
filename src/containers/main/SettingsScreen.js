@@ -3,7 +3,7 @@ import { View, StyleSheet } from 'react-native';
 import { Text, TouchableRipple, List, Switch, Portal, Surface } from 'react-native-paper';
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
-export class SettingsScreen extends PureComponent {
+export default class SettingsScreen extends PureComponent {
     constructor(props) {
         super();
     }

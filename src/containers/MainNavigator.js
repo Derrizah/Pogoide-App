@@ -112,6 +112,9 @@ class TabStack extends PureComponent {
                     inactiveTintColor: 'gray',
                     indicatorStyle: {backgroundColor: "white"},
                     style:{ backgroundColor:"#003a70"},
+                    safeAreaInsets: {
+                        bottom: 0,
+                    },
                 }}
             >
                 <Tab.Screen name="Current" component={CurrentStackScreen} initialParams={{
@@ -126,14 +129,46 @@ class TabStack extends PureComponent {
     }
 }
 
-class HomeScreen extends PureComponent {
-    constructor() {
-        super();
-        // this.reverse = true;
-    }
-    render() {
-        return (
-            <RootStack.Navigator>
+// class HomeScreen extends PureComponent {
+//     constructor() {
+//         super();
+//         // this.reverse = true;
+//     }
+//     render() {
+//         return (
+//             <RootStack.Navigator>
+//                 <RootStack.Screen name="HeaderTitle" component={TabStack}
+//                                   options={{
+//                                       header: ({ scene, previous, navigation }) => {
+//                                           const { options } = scene.descriptor;
+//                                           const title =
+//                                               options.headerTitle !== undefined
+//                                                   ? options.headerTitle
+//                                                   : options.title !== undefined
+//                                                   ? options.title
+//                                                   : scene.route.name;
+//
+//
+//                                           return (
+//                                               <Appbar.Header
+//                                                   style={{backgroundColor:"#003a70"}}>
+//                                                   <Appbar.Content title="Pogoide"/>
+//                                                   <Appbar.Action icon="settings" onPress={() => navigation.push('Settings')}/>
+//                                                   {/*<Appbar.Action icon="settings" onPress={() => navigation.navigate}/>*/}
+//                                               </Appbar.Header>
+//                                           );
+//                                       },
+//                                   }}/>
+//                 <RootStack.Screen name="Settings" component={SettingsScreen}/>
+//             </RootStack.Navigator>
+//         );
+//     }
+// }
+
+export default function MainNavigator() {
+    return (
+        <NavigationContainer>
+            <RootStack.Navigator initialRouteName="Home">
                 <RootStack.Screen name="HeaderTitle" component={TabStack}
                                   options={{
                                       header: ({ scene, previous, navigation }) => {
@@ -150,25 +185,14 @@ class HomeScreen extends PureComponent {
                                               <Appbar.Header
                                                   style={{backgroundColor:"#003a70"}}>
                                                   <Appbar.Content title="Pogoide"/>
-                                                  <Appbar.Action icon="settings" onPress={() => navigation.navigate('SettingsTitle')}/>
+                                                  <Appbar.Action icon="settings" onPress={() => navigation.push('Settings')}/>
                                                   {/*<Appbar.Action icon="settings" onPress={() => navigation.navigate}/>*/}
                                               </Appbar.Header>
                                           );
                                       },
                                   }}/>
-                <RootStack.Screen name="SettingsTitle" component={SettingsScreen}/>
+                <RootStack.Screen name="Settings" component={SettingsScreen}/>
             </RootStack.Navigator>
-        );
-    }
-}
-
-export default function MainNavigator() {
-    return (
-        <NavigationContainer>
-            <RootDrawer.Navigator initialRouteName="Home">
-                <RootDrawer.Screen name="Home" component={HomeScreen}/>
-                <RootDrawer.Screen name="Home2" component={HomeScreen}/>
-            </RootDrawer.Navigator>
         </NavigationContainer>
     );
 }

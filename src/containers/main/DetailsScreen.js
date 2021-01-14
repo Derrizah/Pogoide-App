@@ -7,7 +7,7 @@ import {TouchableOpacity} from "react-native-web";
 import { scale, verticalScale, moderateScale, moderateVerticalScale } from 'react-native-size-matters';
 import HTML from "react-native-render-html";
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import NotificationService from "../../scripts/NotificationService";
+// import NotificationService from "../../scripts/NotificationService";
 
 
 
@@ -26,8 +26,8 @@ export class DetailsScreen extends PureComponent {
         // this.navigator = props.route.navigator;
         this.storageKey = "@" + this.event.codename;
 
-        this.notif = new NotificationService();
-        this.notif.create(this.event.title, this.event.codename, this.event.start);
+        // this.notif = new NotificationService();
+        // this.notif.create(this.event.title, this.event.codename, this.event.start);
     }
     state={
       isSubscribed: false,
@@ -51,7 +51,7 @@ export class DetailsScreen extends PureComponent {
     {
         const nextStatus = (!this.state.isSubscribed).toString();
         let fabIcon = "bell";
-        this.notif.toggleNotification()
+        // this.notif.toggleNotification()
         AsyncStorage.setItem(this.storageKey, nextStatus).then(
             () => this.setState({isSubscribed: (nextStatus === 'true'), fabIcon: (nextStatus === 'true') ? "bell" : "bell-off"})
         );

@@ -22,7 +22,7 @@ export default () => {
 
 // const Navigation = createAppContainer(TabNavigator);
 const Root = () => <Fragment>
-    <SafeAreaView style={{ flex: 0, backgroundColor: '#003a70' }} />
+    <SafeAreaView style={{ backgroundColor: '#003a70' }} />
     <View style={{ flex: 1}}>
         <MainNavigator />
         <FlashMessage position="bottom" icon="info" backgroundColor="#003a70" style={{height: scale(60)}}/>

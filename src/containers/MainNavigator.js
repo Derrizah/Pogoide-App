@@ -186,7 +186,7 @@ export default function MainNavigator() {
                                               <Appbar.Header
                                                   style={{backgroundColor:"#003a70"}}>
                                                   <Appbar.Content title="Pogoide"/>
-                                                  <Appbar.Action icon="settings" onPress={() => navigation.push('Settings')}/>
+                                                  <Appbar.Action icon="gear" onPress={() => navigation.push('Settings')}/>
                                                   {/*<Appbar.Action icon="settings" onPress={() => navigation.navigate}/>*/}
                                               </Appbar.Header>
                                           );

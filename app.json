@@ -9,7 +9,8 @@
       "**/*"
     ],
     "android": {
-      "package": "com.appguyinc.pogoide"
+      "package": "com.appguyinc.pogoide",
+      "useNextNotificationsApi": true,
     }
   }
 }

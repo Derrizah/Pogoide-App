@@ -47,7 +47,7 @@ export class DetailsScreen extends PureComponent {
             </View>
         );
     }
-    toggleSubscription()
+    async toggleSubscription()
     {
         const nextStatus = (!this.state.isSubscribed).toString();
         let fabIcon = "bell";
@@ -88,7 +88,7 @@ export class DetailsScreen extends PureComponent {
                             zIndex: 1}}
                         medium
                         icon={this.state.fabIcon} // bell  bell-off
-                        onPress={() => this.toggleSubscription()}/>
+                        onPress={async () => await this.toggleSubscription()}/>
                 )}
                 <ScrollView>
                     <Image style={{width: '100%',

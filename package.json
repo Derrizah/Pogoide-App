@@ -30,6 +30,7 @@
     "react": "16.13.1",
     "react-dom": "16.13.1",
     "react-native": "0.63.4",
+    "react-native-app-intro-slider": "^4.0.4",
     "react-native-dropdownalert": "^4.3.0",
     "react-native-fast-image": "^8.3.4",
     "react-native-flash-message": "^0.1.18",

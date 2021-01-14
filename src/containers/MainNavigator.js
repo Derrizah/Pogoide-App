@@ -112,7 +112,10 @@ class TabStack extends PureComponent {
                     activeTintColor: 'white',
                     inactiveTintColor: 'gray',
                     indicatorStyle: {backgroundColor: "white"},
-                    style:{ backgroundColor:"#003a70"},
+                    style:{
+                        backgroundColor:"#003a70",
+                        elevation: 0,
+                    },
                     safeAreaInsets: {
                         bottom: 0,
                     },
@@ -184,9 +187,12 @@ export default function MainNavigator() {
 
                                           return (
                                               <Appbar.Header
-                                                  style={{backgroundColor:"#003a70"}}>
+                                                  style={{
+                                                      backgroundColor:"#003a70",
+                                                      elevation: 0,
+                                                  }}>
                                                   <Appbar.Content title="Pogoide"/>
-                                                  <Appbar.Action icon="gear" onPress={() => navigation.push('Settings')}/>
+                                                  <Appbar.Action icon="settings" onPress={() => navigation.push('Settings')}/>
                                                   {/*<Appbar.Action icon="settings" onPress={() => navigation.navigate}/>*/}
                                               </Appbar.Header>
                                           );

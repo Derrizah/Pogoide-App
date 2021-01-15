@@ -1,37 +1,19 @@
 import React, {PureComponent} from 'react';
-import colors from './../res/colors';
-import { NavigationContainer } from '@react-navigation/native';
-import Ionicons from 'react-native-vector-icons/Ionicons';
-import UpcomingStackScreen from './main/UpcomingStackScreen'
-import CurrentStackScreen from './main/CurrentStackScreen'
-import SettingsScreen from './main/SettingsScreen'
-import {createMaterialTopTabNavigator} from "@react-navigation/material-top-tabs";
 import {StyleSheet, Text, View} from "react-native";
-import palette from "../res/palette";
+
+import { NavigationContainer } from '@react-navigation/native';
+import {createMaterialTopTabNavigator} from "@react-navigation/material-top-tabs";
 import createStackNavigator from "@react-navigation/stack/src/navigators/createStackNavigator";
 import firebase from 'firebase/app';
 import 'firebase/database';
-import {StatusBar, TouchableOpacity} from "react-native-web";
-import {createDrawerNavigator} from "@react-navigation/drawer";
-import {DrawerActions} from "@react-navigation/routers";
 import { Appbar } from 'react-native-paper';
 import {showMessage} from "react-native-flash-message";
-import changeNavigationBarColor from 'react-native-navigation-bar-color';
 import { scale, verticalScale, moderateScale } from 'react-native-size-matters';
-import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
 
-const RootDrawer = createDrawerNavigator();
-class DrawerStack extends PureComponent {
-    render() {
-        return (
-            <NavigationContainer>
-                <RootDrawer.Navigator initialRouteName="Home">
-                    <RootDrawer.Screen name="Home" component={HomeScreen}/>
-                    <RootDrawer.Screen name="Home2" component={HomeScreen}/>
-                </RootDrawer.Navigator>
-            </NavigationContainer>
-        )}
-}
+import palette from "../res/palette";
+import UpcomingStackScreen from './main/UpcomingStackScreen'
+import CurrentStackScreen from './main/CurrentStackScreen'
+import SettingsScreen from './main/SettingsScreen'
 
 
 const RootStack = createStackNavigator();

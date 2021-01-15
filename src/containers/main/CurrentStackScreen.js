@@ -3,25 +3,20 @@ import {
     Text,
     FlatList,
     View,
-    StyleSheet,
-    Image,
-    TouchableOpacity, Pressable
+    StyleSheet, Platform
 } from 'react-native';
 import { createStackNavigator, TransitionPresets } from '@react-navigation/stack';
-import images from './../../res/images';
-import ListItem from './ListItem';
-import DetailsScreen from './DetailsScreen';
-import {render} from "react-native-web";
 import {ActivityIndicator, IconButton, Colors, TouchableRipple, FAB} from "react-native-paper";
-import firebase from 'firebase/app';
-import 'firebase/database';
-import {Platform} from "react-native-web";
-import NetInfo from "@react-native-community/netinfo";
-import EventItem, {PlaceholderEvent, EventItemC} from "./EventItem";
-import {showMessage} from "react-native-flash-message";
-import moment from "moment";
-import {scale} from "react-native-size-matters";
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import 'firebase/database';
+import NetInfo from "@react-native-community/netinfo";
+import {showMessage} from "react-native-flash-message";
+
+import moment from "moment";
+
+import DetailsScreen from './DetailsScreen';
+import EventItem, {PlaceholderEvent, EventItemC} from "./EventItem";
+
 
 
 export class CurrentScreen extends PureComponent {

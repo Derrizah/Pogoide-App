@@ -1,12 +1,12 @@
 import React, {PureComponent, Fragment} from 'react';
 import {View, StyleSheet, ScrollView, Platform, Image, Text} from 'react-native';
+
 import {Divider, Surface, FAB, Button} from 'react-native-paper';
 import Carousel from 'react-native-snap-carousel';
-import moment from "moment";
-import {TouchableOpacity} from "react-native-web";
 import { scale, verticalScale, moderateScale, moderateVerticalScale } from 'react-native-size-matters';
 import HTML from "react-native-render-html";
 import AsyncStorage from '@react-native-async-storage/async-storage';
+
 import {togglePushNotification} from '../../scripts/NotificationsHandler'
 
 

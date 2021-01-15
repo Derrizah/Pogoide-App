@@ -1,6 +1,7 @@
 import React from 'react';
 import {Text} from 'react-native';
-import {Avatar, Button, Card, Title, Paragraph, DefaultTheme} from 'react-native-paper';
+
+import {Button, Card, Title, Paragraph} from 'react-native-paper';
 import {Fade, Placeholder, PlaceholderLine, PlaceholderMedia} from "rn-placeholder";
 import { scale, verticalScale, moderateScale, moderateVerticalScale } from 'react-native-size-matters';
 import AsyncStorage from "@react-native-async-storage/async-storage";

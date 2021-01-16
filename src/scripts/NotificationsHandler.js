@@ -2,7 +2,7 @@ import * as Notifications from 'expo-notifications';
 import Constants from 'expo-constants';
 import {Platform} from "react-native";
 
-import AsyncStorage from "@react-native-async-storage/async-storage";
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import moment from "moment";
 
 export async function schedulePushNotification() {
@@ -25,8 +25,10 @@ export async function togglePushNotification(title, codename, date){
 
     await AsyncStorage.getItem("@" + codename)
         .then((result) => subscriptionStatus = result);
+    console.log("subscriptionStatus is " + subscriptionStatus);
 
     if(subscriptionStatus === "true") {
+        console.log("cancelling...");
         await AsyncStorage.setItem("@" + codename, "false")
             .catch(err => {
                 console.log("Subscription status saving error");
@@ -35,6 +37,10 @@ export async function togglePushNotification(title, codename, date){
         await Notifications.cancelScheduledNotificationAsync(startNotifId);
     }
     else {
+        await AsyncStorage.setItem("@" + codename, "true")
+            .catch(err => {
+                console.log("Subscription status saving error");
+            });
         // Notification Strings
         const soonTitle = "An event will start soon! 📅";
         const soonSubtitle = "Upcoming Event";
@@ -69,27 +75,29 @@ export async function togglePushNotification(title, codename, date){
         let soonDate;
         await AsyncStorage.getItem("@soonDays")
             .then((result) => {
-                soonDate = moment(date).subtract(parseInt(result), 'days').toDate();
+                soonDate = moment(dateObject).subtract(parseInt(result), 'days').toDate();
+                console.log(soonDate);
             })
             .catch(err => {
                 console.log("Could not get soonDays from async storage.");
-               soonDate =  moment(date).subtract(5, 'days').toDate();
+               soonDate =  moment(dateObject).subtract(5, 'days').toDate();
             });
-            if(soonDate > Date.now()) {
-                await Notifications.scheduleNotificationAsync({
-                    identifier: soonNotifId,
-                    content: {
-                        title: soonTitle,
-                        subtitle: soonSubtitle,
-                        body: title + soonBodyPostfix,
-                    },
-                    trigger: {
-                        channelId: "soon-channel",
-                        date: soonDate,
-                    }
-                });
-            }
+        if(soonDate > Date.now()) {
+            console.log("soon notif is a go");
+            await Notifications.scheduleNotificationAsync({
+                identifier: soonNotifId,
+                content: {
+                    title: soonTitle,
+                    subtitle: soonSubtitle,
+                    body: title + soonBodyPostfix,
+                },
+                trigger: {
+                    channelId: "soon-channel",
+                    date: soonDate,
+                }
+            });
         }
+    }
         console.log("Notification should be set.");
 
 

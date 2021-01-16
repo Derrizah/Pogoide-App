@@ -63,9 +63,16 @@ export class UpcomingScreen extends PureComponent {
                 this.setState({eventsList: dataLoaded})
             }
         });
-        console.log(data);
+
         //this.setState({eventsList: this.props.currentsList, loading:false});
     }
+    async componentDidUpdate(prevProps, prevState, snapshot) {
+        await AsyncStorage.getItem("@6fb367944c3e2fbf48d5d2b64c0ab0bb8bade477")
+            .then((result)=> {
+                console.log("upcomingscreen sees " + result);
+            });
+    }
+
     renderItem(item) {
         //return <ListItem item={item}/>
         // return <Pressable

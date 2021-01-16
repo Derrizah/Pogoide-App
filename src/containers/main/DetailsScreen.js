@@ -6,7 +6,6 @@ import Carousel from 'react-native-snap-carousel';
 import { scale, verticalScale, moderateScale, moderateVerticalScale } from 'react-native-size-matters';
 import HTML from "react-native-render-html";
 import AsyncStorage from '@react-native-async-storage/async-storage';
-
 import {togglePushNotification} from '../../scripts/NotificationsHandler'
 
 
@@ -32,9 +31,12 @@ export class DetailsScreen extends PureComponent {
       isSubscribed: false,
       fabIcon: "bell",
     }
-    componentDidMount() {
-      AsyncStorage.getItem(this.storageKey)
-          .then((result)=>this.setState({isSubscribed: (result === 'true'), fabIcon: (result === 'true') ? "bell" : "bell-off"}));
+    async componentDidMount() {
+      await AsyncStorage.getItem(this.storageKey)
+          .then((result)=> {
+              this.setState({isSubscribed: (result === 'true'), fabIcon: (result === 'true') ? "bell" : "bell-off"});
+              console.log("detailsscreen sees "+result);
+          });
     }
 
     _renderItem = ({item, index}) => {
@@ -49,11 +51,13 @@ export class DetailsScreen extends PureComponent {
     async toggleSubscription()
     {
         const nextStatus = (!this.state.isSubscribed).toString();
+        console.log("Nextstatus is " + nextStatus);
         let fabIcon = "bell";
         // this.notif.toggleNotification()
-        await AsyncStorage.setItem(this.storageKey, nextStatus).then(
-            () => this.setState({isSubscribed: (nextStatus === 'true'), fabIcon: (nextStatus === 'true') ? "bell" : "bell-off"})
-        );
+        // await AsyncStorage.setItem(this.storageKey, nextStatus).then(
+        //     () => this.setState({isSubscribed: (nextStatus === 'true'), fabIcon: (nextStatus === 'true') ? "bell" : "bell-off"})
+        // );
+        this.setState({isSubscribed: (nextStatus === 'true'), fabIcon: (nextStatus === 'true') ? "bell" : "bell-off"})
         await togglePushNotification(this.event.title, this.event.codename, this.event.start);
     }
     render()

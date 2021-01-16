@@ -16,6 +16,8 @@ import * as Notifications from 'expo-notifications';
 import {registerForPushNotificationsAsync} from "./src/scripts/NotificationsHandler";
 import AppIntroSlider from 'react-native-app-intro-slider';
 import {IconButton} from "react-native-paper";
+import { AnimatedSVGPaths } from "react-native-svg-animations";
+import {pokeball, bell, details, shoes} from "./src/res/svgs";
 
 Notifications.setNotificationHandler({
     handleNotification: async () => ({
@@ -38,12 +40,33 @@ export default class Root extends Component {
     }
     _renderItem = ({ item }) => {
         return (
-            <View style={{flex: 1,
+            <View style={{flex: 6,
                 alignItems: 'center',
                 justifyContent: 'center',
                 backgroundColor: item.backgroundColor}}>
                 <Text style={styles.title}>{item.title}</Text>
-                <Image source={item.image} style={styles.image}/>
+                {/*<Image source={item.image} style={styles.image}/>*/}
+                {
+                    item.key === 'one' &&
+                    (
+                <View style={{
+                marginLeft: 41}}>
+                <AnimatedSVGPaths
+                    strokeColor={"white"}
+                    strokeWidth={20}
+                    duration={5000}
+                    height={512}
+                    width={512}
+                    scale={0.8}
+                    delay={100}
+                    loop={false}
+                    ds={item.image}
+                /></View>)}
+                {
+                    ((item.key === 'two' || item.key ==='three' || item.key ==='four') &&
+                    (
+                        <Image source={item.image} style={styles.image}/>
+                    ))}
                 <Text style={styles.text}>{item.text}</Text>
             </View>
         );
@@ -122,7 +145,8 @@ const slides = [
         key: 'one',
         title: 'Welcome to Pogoide!',
         text: 'All events in one place\nAlways up-to-date',
-        image: require('./src/res/images/pokeball.png'),
+        // image: require('./src/res/images/pokeball.png'),
+        image: pokeball,
         backgroundColor: '#EB804C',
     },
     {

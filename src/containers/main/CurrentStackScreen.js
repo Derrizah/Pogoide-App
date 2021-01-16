@@ -78,7 +78,6 @@ export class CurrentScreen extends PureComponent {
                 this.setState({eventsList: dataLoaded});
             }
         });
-        console.log(data);
         //this.setState({eventsList: this.props.currentsList, loading:false});
     }
     renderItem(item) {

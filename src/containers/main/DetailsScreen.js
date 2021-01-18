@@ -87,7 +87,7 @@ export class DetailsScreen extends PureComponent {
                             margin: 16,
                             right: 0,
                             bottom: 0,
-                            backgroundColor: "#003a70",
+                            backgroundColor: this.event.color,
                             elevation:4,
                             zIndex: 1}}
                         medium

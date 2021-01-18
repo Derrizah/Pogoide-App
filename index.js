@@ -1,8 +1,6 @@
 import { registerRootComponent } from 'expo';
 import {View, Platform, Text, Image, StyleSheet} from 'react-native';
 
-import App from './App';
-
 import React, {Fragment, useState, useEffect, useRef, Component } from 'react';
 import {AppRegistry} from 'react-native';
 import { StatusBar } from 'react-native';
@@ -18,6 +16,9 @@ import AppIntroSlider from 'react-native-app-intro-slider';
 import {IconButton} from "react-native-paper";
 import { AnimatedSVGPaths } from "react-native-svg-animations";
 import {pokeball, bell, details, shoes} from "./src/res/svgs";
+import AsyncStorage from '@react-native-async-storage/async-storage';
+
+import {PokeballSVG} from "./src/scripts/SVGObjects"
 
 Notifications.setNotificationHandler({
     handleNotification: async () => ({
@@ -33,10 +34,13 @@ StatusBar.backgroundColor = '#000';
 export default class Root extends Component {
     constructor() {
         super();
-        registerForPushNotificationsAsync();
     }
     state = {
         showRealApp: false
+    }
+    componentDidMount() {
+        AsyncStorage.getItem("@shownIntro")
+            .then( (result) => this.setState({showRealApp: (result === "true")}));
     }
     _renderItem = ({ item }) => {
         return (
@@ -51,7 +55,7 @@ export default class Root extends Component {
                     (
                 <View style={{
                 marginLeft: 41}}>
-                <AnimatedSVGPaths
+                <PokeballSVG
                     strokeColor={"white"}
                     strokeWidth={20}
                     duration={5000}
@@ -75,7 +79,6 @@ export default class Root extends Component {
         return (
             <View style={styles.buttonCircle}>
                 <IconButton
-                    name="md-arrow-round-forward"
                     color="rgba(255, 255, 255, .9)"
                     size={24}
                     icon="arrow-right"
@@ -110,7 +113,8 @@ export default class Root extends Component {
     _onDone = () => {
         // User finished the introduction. Show real app through
         // navigation or simply by controlling state
-        this.setState({ showRealApp: true });
+        AsyncStorage.setItem("@shownIntro", "true")
+            .then(() => this.setState({ showRealApp: true }));
     }
     render() {
         if(this.state.showRealApp) {

@@ -8,12 +8,16 @@ import firebase from 'firebase/app';
 import 'firebase/database';
 import { Appbar } from 'react-native-paper';
 import {showMessage} from "react-native-flash-message";
+import * as Notifications from 'expo-notifications';
+
 import { scale, verticalScale, moderateScale } from 'react-native-size-matters';
 
-import palette from "../res/palette";
 import UpcomingStackScreen from './main/UpcomingStackScreen'
 import CurrentStackScreen from './main/CurrentStackScreen'
 import SettingsScreen from './main/SettingsScreen'
+import {SafeAreaContext, SafeAreaProvider, SafeAreaView} from "react-native-safe-area-context";
+import {registerForPushNotificationsAsync} from "../scripts/NotificationsHandler";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 
 const RootStack = createStackNavigator();
@@ -85,10 +89,32 @@ class TabStack extends PureComponent {
             style: {height: scale(80)},
             duration: 5000,
         });
+        const token = await registerForPushNotificationsAsync();
+        let shouldSend = false;
+        await AsyncStorage.getItem("@sentToken")
+            .then( (result) => {
+                shouldSend = !(result === "true")
+                console.log("sentToken result is " + result);
+            });
+        if(shouldSend){
+            let realToken = token;
+            realToken = realToken.replace('ExponentPushToken[', '');
+            realToken = realToken.replace(']', '');
+            console.log("realtoken is " + realToken);
+           const tokensDb = this.db.ref('/tokens/' + realToken).set({
+               token: realToken,
+           },(error) => {
+               if(error){
+                   console.log("error sending token");
+               } else {
+                   console.log("successfully sent token");
+                   AsyncStorage.setItem("@sentToken", "true");
+               }
+           });
+        }
     }
     render() {
         return (
-            // <SortContext.Provider value={this.reverse}>
             <Tab.Navigator
                 tabBarOptions={{
                     activeTintColor: 'white',
@@ -98,11 +124,7 @@ class TabStack extends PureComponent {
                         backgroundColor:"#003a70",
                         elevation: 0,
                     },
-                    safeAreaInsets: {
-                        bottom: 0,
-                    },
-                }}
-            >
+                }}>
                 <Tab.Screen name="Current" component={CurrentStackScreen} initialParams={{
                     db: this.db
                 }} />
@@ -110,7 +132,6 @@ class TabStack extends PureComponent {
                     db: this.db
                 }} />
             </Tab.Navigator>
-            // </SortContext.Provider>
         )
     }
 }
@@ -154,32 +175,48 @@ class TabStack extends PureComponent {
 export default function MainNavigator() {
     return (
         <NavigationContainer>
-            <RootStack.Navigator initialRouteName="Home">
-                <RootStack.Screen name="HeaderTitle" component={TabStack}
-                                  options={{
-                                      header: ({ scene, previous, navigation }) => {
-                                          const { options } = scene.descriptor;
-                                          const title =
-                                              options.headerTitle !== undefined
-                                                  ? options.headerTitle
-                                                  : options.title !== undefined
-                                                  ? options.title
-                                                  : scene.route.name;
-
-
-                                          return (
-                                              <Appbar.Header
-                                                  style={{
-                                                      backgroundColor:"#003a70",
-                                                      elevation: 0,
-                                                  }}>
-                                                  <Appbar.Content title="Pogoide"/>
-                                                  <Appbar.Action icon="settings" onPress={() => navigation.push('Settings')}/>
-                                                  {/*<Appbar.Action icon="settings" onPress={() => navigation.navigate}/>*/}
-                                              </Appbar.Header>
-                                          );
-                                      },
-                                  }}/>
+            <RootStack.Navigator initialRouteName="Home" screenOptions={{
+                header: ({ scene, previous, navigation }) => {
+                    return (
+                        <Appbar.Header
+                            style={{
+                                backgroundColor:"#003a70",
+                                elevation: 0,
+                            }}>
+                            {previous ? <Appbar.BackAction onPress={navigation.goBack} /> : null}
+                            <Appbar.Content title={scene.route.name}/>
+                            {!previous ? <Appbar.Action icon="cog" onPress={() => navigation.navigate('Settings')}/> : null}
+                            {/*<Appbar.Action icon="settings" onPress={() => navigation.navigate}/>*/}
+                        </Appbar.Header>
+                    );
+                }
+            }}>
+                <RootStack.Screen name="Pogoide" component={TabStack}
+                                  // options={{
+                                  //     header: ({ scene, previous, navigation }) => {
+                                  //         // const { options } = scene.descriptor;
+                                  //         // const title =
+                                  //         //     options.headerTitle !== undefined
+                                  //         //         ? options.headerTitle
+                                  //         //         : options.title !== undefined
+                                  //         //         ? options.title
+                                  //         //         : scene.route.name;
+                                  //
+                                  //
+                                  //         return (
+                                  //             <Appbar.Header
+                                  //                 style={{
+                                  //                     backgroundColor:"#003a70",
+                                  //                     elevation: 0,
+                                  //                 }}>
+                                  //                 <Appbar.Content title="Pogoide"/>
+                                  //                 <Appbar.Action icon="settings" onPress={() => navigation.push('Settings')}/>
+                                  //                 {/*<Appbar.Action icon="settings" onPress={() => navigation.navigate}/>*/}
+                                  //             </Appbar.Header>
+                                  //         );
+                                  //     },
+                                  // }}
+                    />
                 <RootStack.Screen name="Settings" component={SettingsScreen}
                                   options={{
                                       headerStyle: {
@@ -192,96 +229,3 @@ export default function MainNavigator() {
         </NavigationContainer>
     );
 }
-
-
-// export default function TabNavigator() {
-//   return (
-//     <NavigationContainer>
-//       <Tab.Navigator
-//           options={{
-//               ...palette.header,
-//               headerLeft: () => (
-//                   <View style={styles.headerLeftContainer}>
-//                       <Text style={styles.headerTitle}>Go Beyond?</Text>
-//                   </View>
-//               ),
-//               headerRight: () => (
-//                   <View style={styles.headerRightContainer}>
-//                       <Text style={styles.headerRightText}>right</Text>
-//                   </View>
-//               ),
-//           }}
-//         screenOptions={({ route }) => ({
-//             ...palette.header,
-//             headerLeft: () => (
-//                 <View style={styles.headerLeftContainer}>
-//                     <Text style={styles.headerTitle}>Go Beyond?</Text>
-//                 </View>
-//             ),
-//             headerRight: () => (
-//                 <View style={styles.headerRightContainer}>
-//                     <Text style={styles.headerRightText}>right</Text>
-//                 </View>
-//             ),
-//           tabBarIcon: ({ focused, color, size }) => {
-//             let iconName;
-//
-//             if (route.name === 'Home') {
-//               iconName = focused
-//                 ? 'ios-information-circle'
-//                 : 'ios-information-circle-outline';
-//             } else if (route.name === 'Settings') {
-//               iconName = focused ? 'ios-list-box' : 'ios-list';
-//             }
-//
-//             // You can return any component that you like here!
-//             return <Ionicons name={iconName} size={size} color={color} />;
-//           },
-//         })}
-//         tabBarOptions={{
-//           activeTintColor: 'tomato',
-//           inactiveTintColor: 'gray',
-//         }}
-//       >
-//         <Tab.Screen name="CurrentT" component={CurrentStackScreen} />
-//         <Tab.Screen name="Upcoming" component={UpcomingStackScreen} />
-//       </Tab.Navigator>
-//     </NavigationContainer>
-//   );
-// }
-
-const styles = StyleSheet.create({
-    appHeaderContainer: {height: 32},
-    headerLeftContainer: {...palette.header.headerLeftContainer},
-    headerLogo: { marginLeft: 10, height: 30, width: 80, resizeMode: 'center' },
-    headerRightText: { marginRight: 10, height: 30},
-});
-
-
-// const routeConfig = {
-//   Current: CurrentNavigator,
-//   Upcoming: UpcomingNavigator,
-// };
-
-// const navigatorConfig = {
-//   initialRouteName: 'Current',
-//   defaultNavigationOptions: ({ navigation }) => ({
-//     tabBarOptions: {
-//       showLabel: false,
-//       showIcon: true,
-//       style: { backgroundColor: colors.tabBackground },
-//     },
-//     tabBarIcon: ({ focused }) => {
-//       const { routeName } = navigation.state;
-//       let icon;
-//       switch (routeName) {
-//         case 'Current': icon = focused ? images.current_selected : images.current; break;
-//         case 'Upcoming': icon = focused ? images.upcoming_selected : images.upcoming; break;
-//         default: icon = focused ? images.current_selected : images.current; break;
-//       }
-//       return <Image style={{ ...palette.header.image }} source={icon} />
-//     }
-//   })
-// }
-
-// export default TabNavigator = createBottomTabNavigator(routeConfig, navigatorConfig);

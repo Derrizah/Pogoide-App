@@ -166,4 +166,5 @@ export async function registerForPushNotificationsAsync() {
             lightColor: '#003a70',
         });
     }
+    return token;
 }

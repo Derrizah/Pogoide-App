@@ -160,35 +160,79 @@ export class CurrentScreen extends PureComponent {
     }
     async getCurrent(){
         let data = [];
-        const current = this.db.ref('/currentEvents');
-        await current.once('value').then((snapshot) => {
-            data = snapshot.val();
-        })
-        const eventsData = Object.keys(data).map(key => ({
-            key,
-            ...data[key]
-        }));
-        eventsData.map((event) => {
-            if(event.ISO_time){
-                event.start = moment(event.start).format("dddd, MMM DD[, at] HH:mm A");
-                event.end = moment(event.end).format("dddd, MMM DD[, at] HH:mm A");
+        console.log("getting current");
+        NetInfo.fetch().then(state => {
+            if(state.isConnected){
+                this.setState({connection: true});
+                console.log("connection true");
+            }
+            else {
+                this.setState({connection: false});
+                showMessage({
+                    message: "connection false",
+                    backgroundColor: "#ff4040",
+                });
             }
         });
-        if(this.reverse) {
-            this.setState({eventsList: eventsData.reverse(), loading: false, refreshing: false});
+        if(this.state.connection) {
+            const current = this.db.ref('/currentEvents');
+            await current.once('value').then((snapshot) => {
+                data = snapshot.val();
+            })
+            const eventsData = Object.keys(data).map(key => ({
+                key,
+                ...data[key]
+            }));
+            eventsData.map((event) => {
+                if (event.ISO_time) {
+                    event.start = moment(event.start).format("dddd, MMM DD[, at] HH:mm A");
+                    event.end = moment(event.end).format("dddd, MMM DD[, at] HH:mm A");
+                }
+            });
+            if (this.reverse) {
+                this.setState({eventsList: eventsData.reverse(), loading: false, refreshing: false});
+            } else {
+                this.setState({eventsList: eventsData, loading: false, refreshing: false});
+            }
+            const storeData = async (eventsData) => {
+                try {
+                    const jsonValue = JSON.stringify(eventsData)
+                    await AsyncStorage.setItem('@current', jsonValue)
+                } catch (e) {
+                    console.log("Something unexpected happened while saving to storage.");
+                }
+            }
+            await storeData(eventsData);
         }
         else {
-            this.setState({eventsList: eventsData, loading: false, refreshing: false});
-        }
-        const storeData = async (eventsData) => {
-            try {
-                const jsonValue = JSON.stringify(eventsData)
-                await AsyncStorage.setItem('@current', jsonValue)
-            } catch (e) {
-                console.log("Something unexpected happened while saving to storage.");
+            this.setState({connection: false});
+            showMessage({
+                message: "connection false",
+                backgroundColor: "#ff4040",
+            });
+            const getData = async () => {
+                try {
+                    const jsonValue = await AsyncStorage.getItem('@current')
+                    return jsonValue != null ? JSON.parse(jsonValue) : null;
+                } catch(e) {
+                    // error reading value
+                    showMessage({
+                        message: "error reading value",
+                        backgroundColor: "#ff4040",
+                    });
+                }
+            };
+            const dataLoaded = await getData();
+            showMessage({
+                message: "got Data?",
+                backgroundColor: "#003a70",
+            });
+            if (this.reverse) {
+                this.setState({eventsList: dataLoaded.reverse(), loading: false, refreshing: false});
+            } else {
+                this.setState({eventsList: dataLoaded, loading: false, refreshing: false});
             }
         }
-        await storeData(eventsData);
     }
 
     render() {

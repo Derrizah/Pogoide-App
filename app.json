@@ -10,6 +10,7 @@
     ],
     "android": {
       "package": "com.appguyinc.pogoide",
+      "googleServicesFile": "./google-services.json",
       "useNextNotificationsApi": true,
     }
   }

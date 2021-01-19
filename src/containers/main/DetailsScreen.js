@@ -7,6 +7,7 @@ import { scale, verticalScale, moderateScale, moderateVerticalScale } from 'reac
 import HTML from "react-native-render-html";
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {togglePushNotification} from '../../scripts/NotificationsHandler'
+import {showMessage} from "react-native-flash-message";
 
 
 const scrollEnabled = Platform.select({ web: true, default: false });
@@ -50,15 +51,47 @@ export class DetailsScreen extends PureComponent {
     }
     async toggleSubscription()
     {
-        const nextStatus = (!this.state.isSubscribed).toString();
-        console.log("Nextstatus is " + nextStatus);
-        let fabIcon = "bell";
-        // this.notif.toggleNotification()
-        // await AsyncStorage.setItem(this.storageKey, nextStatus).then(
-        //     () => this.setState({isSubscribed: (nextStatus === 'true'), fabIcon: (nextStatus === 'true') ? "bell" : "bell-off"})
-        // );
-        this.setState({isSubscribed: (nextStatus === 'true'), fabIcon: (nextStatus === 'true') ? "bell" : "bell-off"})
-        await togglePushNotification(this.event.title, this.event.codename, this.event.start);
+        let disabled;
+        await AsyncStorage.getItem("@allDisabled")
+            .then((result) => disabled = (result === "true"));
+        if (!disabled) {
+            const nextStatus = (!this.state.isSubscribed).toString();
+            console.log("Nextstatus is " + nextStatus);
+            let fabIcon = "bell";
+            // this.notif.toggleNotification()
+            // await AsyncStorage.setItem(this.storageKey, nextStatus).then(
+            //     () => this.setState({isSubscribed: (nextStatus === 'true'), fabIcon: (nextStatus === 'true') ? "bell" : "bell-off"})
+            // );
+            this.setState({
+                isSubscribed: (nextStatus === 'true'),
+                fabIcon: (nextStatus === 'true') ? "bell" : "bell-off"
+            })
+            await togglePushNotification(this.event.title, this.event.codename, this.event.start);
+            showMessage({
+                message: this.state.isSubscribed ? "Subscribed to the Event" : "Unsubscribed",
+                description: this.state.isSubscribed ? "You will receive notifications according to your settings." : "" +
+                    "You will not receive notifications.",
+                position: "top",
+                autoHide: true,
+                icon: "success",
+                backgroundColor: this.event.color,
+                style: {height: scale(120)},
+                duration: 5000,
+            });
+        }
+        else {
+            showMessage({
+                message: "Cannot Subscribe to the Event",
+                description: "You disabled all notifications in the settings.",
+                position: "top",
+                autoHide: false,
+                icon: "danger",
+                backgroundColor: "#ff4040",
+                style: {height: scale(120)},
+                duration: 5000,
+            });
+        }
+
     }
     render()
     {

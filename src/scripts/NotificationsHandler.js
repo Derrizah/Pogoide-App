@@ -4,6 +4,7 @@ import {Platform} from "react-native";
 
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import moment from "moment";
+import {not} from "react-native-reanimated";
 
 export async function schedulePushNotification() {
     await Notifications.scheduleNotificationAsync({
@@ -42,13 +43,13 @@ export async function togglePushNotification(title, codename, date){
                 console.log("Subscription status saving error");
             });
         // Notification Strings
-        const soonTitle = "An event will start soon! 📅";
+        const soonTitle =  title + " will start soon! 📅";
         const soonSubtitle = "Upcoming Event";
-        const soonBodyPostfix = " is starting soon. Open the app for details.";
+        const soonBody = title + " is starting soon. Open the app for details.";
 
-        const startTitle = "An event has started! 🕹️";
+        const startTitle = title + " 🕹️";
         const startSubtitle = "Active Event";
-        const startBodyPostfix = " has started. Open the app for details.";
+        const startBody = title + " has started. Open the app for details.";
 
         // Date and Time Parameters
         const dateObject = moment(date, "dddd, MMM DD[, at] HH:mm A");
@@ -65,11 +66,12 @@ export async function togglePushNotification(title, codename, date){
             content: {
                 title: startTitle,
                 subtitle: startSubtitle,
-                body: title + startBodyPostfix,
+                body: startBody,
             },
             trigger: {
                 channelId: "start-channel",
-                date: startDate},
+                date: startDate
+            },
         });
 
         let soonDate;
@@ -89,7 +91,7 @@ export async function togglePushNotification(title, codename, date){
                 content: {
                     title: soonTitle,
                     subtitle: soonSubtitle,
-                    body: title + soonBodyPostfix,
+                    body: soonBody,
                 },
                 trigger: {
                     channelId: "soon-channel",
@@ -98,45 +100,41 @@ export async function togglePushNotification(title, codename, date){
             });
         }
     }
-        console.log("Notification should be set.");
+}
 
+export async function cancelAllNotificationsAsync() {
+    await Notifications.getAllScheduledNotificationsAsync()
+        .then( (notifications) => {
+            for (const item of notifications){
+                AsyncStorage.setItem("@" + item.identifier.slice(0, -1), "false")
+                    .catch(err => {
+                        console.log("all notifications cancelling error");
+                    });
+            }
+        });
+    await Notifications.cancelAllScheduledNotificationsAsync();
+}
 
-        // if(Platform.OS === "ios") {
-        //     await Notifications.scheduleNotificationAsync({
-        //         identifier: soonNotifId,
-        //         content: {
-        //             title: startTitle,
-        //             subtitle: startSubtitle,
-        //             body: title + startBodyPostfix,
-        //         },
-        //         trigger: {
-        //             type:'calendar',
-        //             repeats: false,
-        //             dateComponents: {
-        //                 year: year,
-        //                 month: month,
-        //                 day: day,
-        //                 hour: hour,
-        //                 minute: minute,
-        //             },
-        //         }
-        //     });
-        // }
-        // else if(Platform.OS === "android") {
-        //
-        //     await Notifications.scheduleNotificationAsync({
-        //         identifier: soonNotifId,
-        //         content: {
-        //             title: startTitle,
-        //             subtitle: startSubtitle,
-        //             body: title + startBodyPostfix,
-        //         },
-        //         trigger: {
-        //
-        //         },
-        //     });
-        // }
-    // }
+export async function cancelStartNotificationsAsync() {
+    await Notifications.getAllScheduledNotificationsAsync()
+        .then( (notifications) => {
+            for (const item of notifications){
+                if(item.identifier.endsWith("2")){
+                    Notifications.cancelScheduledNotificationAsync(item.identifier);
+                }
+            }
+        });
+}
+
+export async function cancelSoonNotificationsAsync() {
+    await Notifications.getAllScheduledNotificationsAsync()
+        .then( (notifications) => {
+            for (const item of notifications){
+                if(item.identifier.endsWith("1")){
+                    Notifications.cancelScheduledNotificationAsync(item.identifier);
+                }
+            }
+        });
 }
 
 export async function registerForPushNotificationsAsync() {

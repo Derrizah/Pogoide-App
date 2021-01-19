@@ -1,49 +1,89 @@
-import React, {PureComponent} from 'react';
+import React, {Component} from 'react';
 import { View, StyleSheet } from 'react-native';
 
 import { Text, TouchableRipple, List, Switch, Portal, Surface } from 'react-native-paper';
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import {
+    cancelAllNotificationsAsync,
+    cancelSoonNotificationsAsync,
+    cancelStartNotificationsAsync
+} from "../../scripts/NotificationsHandler";
 
-export default class SettingsScreen extends PureComponent {
+export default class SettingsScreen extends Component {
     constructor(props) {
         super();
-        this.state = {
-            soonNotifyDays: "5",
-            isAllSwitchOn: false,
-            isStartSwitchOn: false,
-            isSoonSwitchOn: false,
-        }
+        // this.state = {
+        //     soonNotifyDays: "5",
+        //     isAllSwitchOn: false,
+        //     isStartSwitchOn: false,
+        //     isSoonSwitchOn: false,
+        // }
         this.onToggleAllSwitch = this.onToggleAllSwitch.bind(this);
         this.onToggleStartSwitch = this.onToggleStartSwitch.bind(this);
         this.onToggleSoonSwitch = this.onToggleSoonSwitch.bind(this);
     }
-    // state = {
-    //     soonNotifyDays: "5",
-    //     isAllSwitchOn: false,
-    //     isStartSwitchOn: false,
-    //     isSoonSwitchOn: false,
-    // }
-    componentDidMount() {
-        AsyncStorage.getItem("@allDisabled")
-            .then((result)=>this.setState({isAllSwitchOn: result}));
-        AsyncStorage.getItem("@startDisabled")
-            .then((result)=>this.setState({isStartSwitchOn: result}));
-        AsyncStorage.getItem("@soonDisabled")
-            .then((result)=>this.setState({isSoonSwitchOn: result}));
+    state = {
+        soonNotifyDays: "5",
+        isAllSwitchOn: false,
+        isStartSwitchOn: false,
+        isSoonSwitchOn: false,
+    }
+    async componentDidMount() {
+        await AsyncStorage.getItem("@allDisabled")
+            .then((result)=>this.setState({isAllSwitchOn: (result === "true")}));
+        await AsyncStorage.getItem("@startDisabled")
+            .then((result)=>this.setState({isStartSwitchOn: (result === "true")}));
+        await AsyncStorage.getItem("@soonDisabled")
+            .then((result)=>this.setState({isSoonSwitchOn: (result === "true")}));
+        await AsyncStorage.getItem("@soonDays")
+            .then((result)=>this.setState({soonNotifyDays: result}));
+        console.log("allDisabled is " + this.state.isAllSwitchOn);
     }
     onToggleAllSwitch() {
-        AsyncStorage.setItem("@allDisabled", (!this.state.isAllSwitchOn).toString()).then(
-            () => this.setState({isAllSwitchOn: !this.state.isAllSwitchOn})
+        const nextStatus = !this.state.isAllSwitchOn;
+        AsyncStorage.setItem("@allDisabled", nextStatus.toString()).then(
+            () => {
+                this.setState({isAllSwitchOn: nextStatus});
+                if(nextStatus) {
+                    cancelAllNotificationsAsync();
+                }
+                else {
+                    AsyncStorage.setItem("@startDisabled", "false").then(
+                        AsyncStorage.setItem("@soonDisabled", "false").then(
+                            () => this.setState({isStartSwitchOn: false, isSoonSwitchOn: false})
+                        )
+                    );
+                }
+            }
         ).catch(err => console.log("Toggle all errored"));
     }
     onToggleStartSwitch() {
-        AsyncStorage.setItem("@startDisabled", (!this.state.isStartSwitchOn).toString()).then(
-            () => this.setState({isStartSwitchOn: !this.state.isStartSwitchOn})
+        const nextStatus = !this.state.isStartSwitchOn;
+        AsyncStorage.setItem("@startDisabled", nextStatus.toString()).then(
+            () => {
+                this.setState({isStartSwitchOn: nextStatus});
+                if(nextStatus && this.state.isSoonSwitchOn) {
+                    this.onToggleAllSwitch();
+                }
+                else if(nextStatus) {
+                    cancelStartNotificationsAsync();
+                }
+
+            }
         );
     }
     onToggleSoonSwitch() {
-        AsyncStorage.setItem("@soonDisabled", (!this.state.isSoonSwitchOn).toString()).then(
-            () => this.setState({isSoonSwitchOn: !this.state.isSoonSwitchOn})
+        const nextStatus = !this.state.isSoonSwitchOn;
+        AsyncStorage.setItem("@soonDisabled", nextStatus.toString()).then(
+            () => {
+                this.setState({isSoonSwitchOn: nextStatus});
+                if(nextStatus && this.state.isStartSwitchOn) {
+                    this.onToggleAllSwitch();
+                }
+                else if(nextStatus) {
+                    cancelSoonNotificationsAsync();
+                }
+            }
         );
     }
     setValue(value) {
@@ -58,21 +98,19 @@ export default class SettingsScreen extends PureComponent {
                     title="Disable All Notifications"
                     description="You will have to opt-in to the events again."
                     right={props => <Switch value={this.state.isAllSwitchOn} onValueChange={this.onToggleAllSwitch}
-                                            color={"#003a70"} style={{transform: [{ scaleX: .8 }, { scaleY: .8 }]}} />}
+                                            color={"#003a70"}  />}
                     titleStyle={{color: 'red'}}
                 />
                 <List.Item
                     title="Disable Event Start Notifications"
                     right={props => <Switch value={this.state.isStartSwitchOn} onValueChange={this.onToggleStartSwitch}
-                                            disabled={this.state.isAllSwitchOn} color={"#003a70"}
-                                            style={{transform: [{ scaleX: .8 }, { scaleY: .8 }]}} />}
+                                            disabled={this.state.isAllSwitchOn} color={"#003a70"} />}
                     style={{opacity: this.state.isAllSwitchOn ? 0.5 : 1}}
                 />
                 <List.Item
                     title="Disable Event Soon Notifications"
                     right={props => <Switch value={this.state.isSoonSwitchOn} onValueChange={this.onToggleSoonSwitch}
-                                            disabled={this.state.isAllSwitchOn} color={"#003a70"}
-                                            style={{transform: [{ scaleX: .8 }, { scaleY: .8 }]}} />}
+                                            disabled={this.state.isAllSwitchOn} color={"#003a70"} />}
                     style={{opacity: this.state.isAllSwitchOn ? 0.5 : 1}}
                 />
                 <List.Item
@@ -159,5 +197,14 @@ export default class SettingsScreen extends PureComponent {
                                 </Surface>
                             </TouchableRipple>
                         </View></View>}/>
+                {
+                    __DEV__
+                }
+                <List.Item
+                    title="Disable Event Soon Notifications"
+                    right={props => <Switch value={this.state.isSoonSwitchOn} onValueChange={this.onToggleSoonSwitch}
+                                            disabled={this.state.isAllSwitchOn} color={"#003a70"} />}
+                    style={{opacity: this.state.isAllSwitchOn ? 0.5 : 1}}
+                />
             </View>)
 }}

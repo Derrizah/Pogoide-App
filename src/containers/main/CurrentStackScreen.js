@@ -16,6 +16,7 @@ import moment from "moment";
 
 import DetailsScreen from './DetailsScreen';
 import EventItem, {PlaceholderEvent, EventItemC} from "./EventItem";
+import {togglePushNotification} from "../../scripts/NotificationsHandler";
 
 
 

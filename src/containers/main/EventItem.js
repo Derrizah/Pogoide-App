@@ -1,5 +1,7 @@
 import React from 'react';
-import {Text} from 'react-native';
+import {Text, View} from 'react-native';
+
+import * as Localization from 'expo-localization';
 
 import {Button, Card, Title, Paragraph} from 'react-native-paper';
 import {Fade, Placeholder, PlaceholderLine, PlaceholderMedia} from "rn-placeholder";
@@ -67,8 +69,11 @@ export class EventItemC extends React.Component {
                 <Card.Cover source={{ uri: this.event.thumbnail }}
                             style={{height: verticalScale(100)}}/>
                 <Card.Content>
+                    <View style={{backgroundColor: this.event.color, marginLeft: scale(-14), marginRight: scale(-14),
+                    elevation: 5}}>
+                        <Text style={{color: "white", marginTop: 4, marginBottom: 4, marginLeft: 17}}>{this.event.type}</Text>
+                    </View>
                     <Title style={{fontSize: verticalScale(15)}}>{this.event.title}</Title>
-
                     <Paragraph><Text style={{fontWeight: "bold", fontSize: verticalScale(11)}}>Starts:</Text>
                         <Text style={{fontSize: verticalScale(11)}}> {this.event.start}</Text></Paragraph>
                     <Paragraph><Text style={{fontWeight: "bold", fontSize: verticalScale(11)}}>Ends:</Text>

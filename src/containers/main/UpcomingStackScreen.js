@@ -16,6 +16,7 @@ import moment from "moment";
 
 import DetailsScreen from './DetailsScreen';
 import EventItem, {PlaceholderEvent, EventItemC} from "./EventItem";
+import {togglePushNotification} from "../../scripts/NotificationsHandler";
 
 
 export class UpcomingScreen extends PureComponent {
@@ -63,8 +64,21 @@ export class UpcomingScreen extends PureComponent {
                 this.setState({eventsList: dataLoaded})
             }
         });
-
         //this.setState({eventsList: this.props.currentsList, loading:false});
+        let disabled;
+        await AsyncStorage.getItem("@allDisabled")
+            .then((result) => disabled = (result === "true"));
+        if(!disabled) {
+            this.state.eventsList.map((event) => {
+                let subscriptionStatus;
+                AsyncStorage.getItem("@" + event.codename)
+                    .then((result) => subscriptionStatus = (result === "true"));
+                if(!subscriptionStatus) {
+                    togglePushNotification(event.title, event.codename, event.start);
+                }
+            });
+            console.log("subscribed to all")
+        }
     }
     // async componentDidUpdate(prevProps, prevState, snapshot) {
     //     await AsyncStorage.getItem("@6fb367944c3e2fbf48d5d2b64c0ab0bb8bade477")

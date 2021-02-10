@@ -96,7 +96,7 @@ export default class SettingsScreen extends Component {
             <View>
                 <List.Item
                     title="Disable All Notifications"
-                    description="You will have to opt-in to the events again."
+                    description="You can restart the app to resubscribe."
                     right={props => <Switch value={this.state.isAllSwitchOn} onValueChange={this.onToggleAllSwitch}
                                             color={"#003a70"}  />}
                     titleStyle={{color: 'red'}}
@@ -114,7 +114,7 @@ export default class SettingsScreen extends Component {
                     style={{opacity: this.state.isAllSwitchOn ? 0.5 : 1}}
                 />
                 <List.Item
-                    title="How many days before do you want to be notified of an upcoming event?"
+                    title="How many days before do you want to be notified?"
                     style={{opacity: (this.state.isAllSwitchOn || this.state.isSoonSwitchOn) ? 0.5 : 1}}
                     description={props =>
                         <View><Text>This setting will apply on new opt-ins.</Text>
@@ -200,11 +200,5 @@ export default class SettingsScreen extends Component {
                 {
                     __DEV__
                 }
-                <List.Item
-                    title="Disable Event Soon Notifications"
-                    right={props => <Switch value={this.state.isSoonSwitchOn} onValueChange={this.onToggleSoonSwitch}
-                                            disabled={this.state.isAllSwitchOn} color={"#003a70"} />}
-                    style={{opacity: this.state.isAllSwitchOn ? 0.5 : 1}}
-                />
             </View>)
 }}

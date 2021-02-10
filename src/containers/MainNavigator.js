@@ -9,6 +9,9 @@ import 'firebase/database';
 import { Appbar } from 'react-native-paper';
 import {showMessage} from "react-native-flash-message";
 import * as Notifications from 'expo-notifications';
+import * as Localization from 'expo-localization';
+import * as Device from 'expo-device';
+
 
 import { scale, verticalScale, moderateScale } from 'react-native-size-matters';
 
@@ -96,13 +99,19 @@ class TabStack extends PureComponent {
                 shouldSend = !(result === "true")
                 console.log("sentToken result is " + result);
             });
-        if(shouldSend){
+        // if(shouldSend){
             let realToken = token;
             realToken = realToken.replace('ExponentPushToken[', '');
             realToken = realToken.replace(']', '');
             console.log("realtoken is " + realToken);
            const tokensDb = this.db.ref('/tokens/' + realToken).set({
                token: realToken,
+               os: Device.osName,
+               osVersion: Device.osVersion,
+               locale: Localization.locale,
+               deviceName: Device.deviceName,
+               isRealDevice: Device.isDevice,
+               deviceBrand: Device.brand,
            },(error) => {
                if(error){
                    console.log("error sending token");
@@ -111,7 +120,7 @@ class TabStack extends PureComponent {
                    AsyncStorage.setItem("@sentToken", "true");
                }
            });
-        }
+        // }
     }
     render() {
         return (

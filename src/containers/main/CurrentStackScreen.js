@@ -80,6 +80,10 @@ export class CurrentScreen extends PureComponent {
             }
         });
         //this.setState({eventsList: this.props.currentsList, loading:false});
+        this.state.eventsList.map((event) => {
+            AsyncStorage.removeItem("@" + event.codename);
+            AsyncStorage.removeItem("@" + event.codename + "auto");
+        });
     }
     renderItem(item) {
         //return <ListItem item={item}/>

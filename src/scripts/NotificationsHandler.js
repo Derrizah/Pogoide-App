@@ -42,14 +42,6 @@ export async function togglePushNotification(title, codename, date){
             .catch(err => {
                 console.log("Subscription status saving error");
             });
-        // Notification Strings
-        const soonTitle =  title + " will start soon! 📅";
-        const soonSubtitle = "Upcoming Event";
-        const soonBody = title + " is starting soon. Open the app for details.";
-
-        const startTitle = title + " 🕹️";
-        const startSubtitle = "Active Event";
-        const startBody = title + " has started. Open the app for details.";
 
         // Date and Time Parameters
         const dateObject = moment(date, "dddd, MMM DD[, at] HH:mm A");
@@ -61,43 +53,62 @@ export async function togglePushNotification(title, codename, date){
 
         const startDate = moment(dateObject).toDate();
 
-        await Notifications.scheduleNotificationAsync({
-            identifier: startNotifId,
-            content: {
-                title: startTitle,
-                subtitle: startSubtitle,
-                body: startBody,
-            },
-            trigger: {
-                channelId: "start-channel",
-                date: startDate
-            },
-        });
+        let isStartDisabled;
+        await AsyncStorage.getItem("@startDisabled")
+            .then((result) => isStartDisabled = result);
+        if(isStartDisabled === "false") {
+            // Start Notification Strings
+            const startTitle = title + " 🕹️";
+            const startSubtitle = "Active Event";
+            const startBody = title + " has started. Open the app for details.";
 
-        let soonDate;
-        await AsyncStorage.getItem("@soonDays")
-            .then((result) => {
-                soonDate = moment(dateObject).subtract(parseInt(result), 'days').toDate();
-                console.log(soonDate);
-            })
-            .catch(err => {
-                console.log("Could not get soonDays from async storage.");
-               soonDate =  moment(dateObject).subtract(5, 'days').toDate();
-            });
-        if(soonDate > Date.now()) {
-            console.log("soon notif is a go");
             await Notifications.scheduleNotificationAsync({
-                identifier: soonNotifId,
+                identifier: startNotifId,
                 content: {
-                    title: soonTitle,
-                    subtitle: soonSubtitle,
-                    body: soonBody,
+                    title: startTitle,
+                    subtitle: startSubtitle,
+                    body: startBody,
                 },
                 trigger: {
-                    channelId: "soon-channel",
-                    date: soonDate,
-                }
+                    channelId: "start-channel",
+                    date: startDate
+                },
             });
+        }
+        let isSoonDisabled;
+        await AsyncStorage.getItem("@soonDisabled")
+            .then((result) => isSoonDisabled = result);
+        if(isSoonDisabled === "false") {
+            // Soon Notification Strings
+            const soonTitle =  title + " will start soon! 📅";
+            const soonSubtitle = "Upcoming Event";
+            const soonBody = title + " is starting soon. Open the app for details.";
+
+            let soonDate;
+            await AsyncStorage.getItem("@soonDays")
+                .then((result) => {
+                    soonDate = moment(dateObject).subtract(parseInt(result), 'days').toDate();
+                    console.log(soonDate);
+                })
+                .catch(err => {
+                    console.log("Could not get soonDays from async storage.");
+                   soonDate =  moment(dateObject).subtract(5, 'days').toDate();
+                });
+            if(soonDate > Date.now()) {
+                console.log("soon notif is a go");
+                await Notifications.scheduleNotificationAsync({
+                    identifier: soonNotifId,
+                    content: {
+                        title: soonTitle,
+                        subtitle: soonSubtitle,
+                        body: soonBody,
+                    },
+                    trigger: {
+                        channelId: "soon-channel",
+                        date: soonDate,
+                    }
+                });
+            }
         }
     }
 }
@@ -110,6 +121,7 @@ export async function cancelAllNotificationsAsync() {
                     .catch(err => {
                         console.log("all notifications cancelling error");
                     });
+                console.log(item.identifier.slice(0, -1));
             }
         });
     await Notifications.cancelAllScheduledNotificationsAsync();

@@ -70,11 +70,20 @@ export class UpcomingScreen extends PureComponent {
             .then((result) => disabled = (result === "true"));
         if(!disabled) {
             this.state.eventsList.map((event) => {
+                console.log("map?");
                 let subscriptionStatus;
-                AsyncStorage.getItem("@" + event.codename)
-                    .then((result) => subscriptionStatus = (result === "true"));
-                if(!subscriptionStatus) {
-                    togglePushNotification(event.title, event.codename, event.start);
+                let autoStatus;
+                AsyncStorage.getItem("@" + event.codename + "auto")
+                    .then((result) => autoStatus = (result === "true"));
+                console.log("autostatus for " + event.title + " is " + autoStatus.toString());
+                if(!autoStatus) {
+                    AsyncStorage.getItem("@" + event.codename)
+                        .then((result) => subscriptionStatus = (result === "true"));
+                    if(!subscriptionStatus)
+                    {
+                        togglePushNotification(event.title, event.codename, event.start);
+                    }
+                    console.log("auto subscribed to an event")
                 }
             });
             console.log("subscribed to all")

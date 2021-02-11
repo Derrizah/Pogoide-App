@@ -6,6 +6,7 @@ import {AppRegistry} from 'react-native';
 import { StatusBar } from 'react-native';
 import {name as appName} from './app.json';
 import MainNavigator from './src/containers/MainNavigator';
+import i18n from './src/scripts/LocalizationHandler'
 import { NavigationContainer } from '@react-navigation/native';
 import FlashMessage from "react-native-flash-message";
 import {scale, verticalScale} from "react-native-size-matters";
@@ -49,31 +50,10 @@ export default class Root extends Component {
                 justifyContent: 'center',
                 backgroundColor: item.backgroundColor}}>
                 <Text style={styles.title}>{item.title}</Text>
-                {/*<Image source={item.image} style={styles.image}/>*/}
-                {
-                    item.key === 'one' &&
-                    (
-                <View style={{
-                marginLeft: 41}}>
-                <PokeballSVG
-                    strokeColor={"white"}
-                    strokeWidth={20}
-                    duration={5000}
-                    height={512}
-                    width={512}
-                    scale={0.8}
-                    delay={100}
-                    loop={false}
-                    ds={item.image}
-                /></View>)}
-                {
-                    ((item.key === 'two' || item.key ==='three' || item.key ==='four') &&
-                    (
-                        <Image source={item.image} style={styles.image}/>
-                    ))}
+                <Image source={item.image} style={styles.image}/>
                 <Text style={styles.text}>{item.text}</Text>
             </View>
-        );
+            )
     }
     _renderNextButton = () => {
         return (
@@ -132,6 +112,7 @@ export default class Root extends Component {
             return (<SafeAreaProvider><AppIntroSlider renderItem={this._renderItem} data={slides}
                                                       showSkipButton={true}
                                                       onDone={this._onDone}
+                                                      renderSkipButton={this._renderSkipButton}
                                                       renderDoneButton={this._renderDoneButton}
                                                       renderNextButton={this._renderNextButton}/>
             </SafeAreaProvider>)
@@ -147,30 +128,29 @@ registerRootComponent(Root);
 const slides = [
     {
         key: 'one',
-        title: 'Welcome to Pogoide!',
-        text: 'All events in one place\nAlways up-to-date',
-        // image: require('./src/res/images/pokeball.png'),
-        image: pokeball,
+        title: i18n.t('intro.title1'),
+        text: i18n.t('intro.text1'),
+        image: require('./src/res/images/pokeball.png'),
         backgroundColor: '#EB804C',
     },
     {
         key: 'two',
-        title: 'Event Details',
-        text: 'Tap to get all the event details\nDates, features,\nspawns and more',
+        title: i18n.t('intro.title2'),
+        text: i18n.t('intro.text2'),
         image: require('./src/res/images/view-details.png'),
         backgroundColor: '#354698',
     },
     {
         key: 'three',
-        title: 'Event Notifications',
-        text: 'Tap the bell icon to\nget notifications both before\nand when an event starts',
+        title: i18n.t('intro.title3'),
+        text: i18n.t('intro.text3'),
         image: require('./src/res/images/bell.png'),
         backgroundColor: '#F2684A',
     },
     {
         key: 'four',
-        title: 'Ready?',
-        text: 'Get hunting!',
+        title: i18n.t('intro.title4'),
+        text: i18n.t('intro.text4'),
         image: require('./src/res/images/running-shoes.png'),
         backgroundColor: '#003a70',
     },
@@ -183,13 +163,13 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
     },
     image: {
-        width: scale(260),
-        height: scale(260),
+        width: scale(240),
+        height: scale(240),
         resizeMode: 'contain',
         marginVertical: 32,
     },
     text: {
-        fontSize: scale(22),
+        fontSize: scale(20),
         color: 'rgba(255, 255, 255, 0.8)',
         textAlign: 'center',
         marginTop: verticalScale(24),

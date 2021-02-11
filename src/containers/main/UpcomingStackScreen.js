@@ -17,7 +17,8 @@ import moment from "moment";
 import DetailsScreen from './DetailsScreen';
 import EventItem, {PlaceholderEvent, EventItemC} from "./EventItem";
 import {togglePushNotification} from "../../scripts/NotificationsHandler";
-
+import i18n from '../../scripts/LocalizationHandler'
+import * as Localization from "expo-localization";
 
 export class UpcomingScreen extends PureComponent {
     constructor(props) {
@@ -65,29 +66,32 @@ export class UpcomingScreen extends PureComponent {
             }
         });
         //this.setState({eventsList: this.props.currentsList, loading:false});
-        let disabled;
-        await AsyncStorage.getItem("@allDisabled")
-            .then((result) => disabled = (result === "true"));
-        if(!disabled) {
-            this.state.eventsList.map((event) => {
-                console.log("map?");
-                let subscriptionStatus;
-                let autoStatus;
-                AsyncStorage.getItem("@" + event.codename + "auto")
-                    .then((result) => autoStatus = (result === "true"));
-                console.log("autostatus for " + event.title + " is " + autoStatus.toString());
-                if(!autoStatus) {
-                    AsyncStorage.getItem("@" + event.codename)
-                        .then((result) => subscriptionStatus = (result === "true"));
-                    if(!subscriptionStatus)
-                    {
-                        togglePushNotification(event.title, event.codename, event.start);
-                    }
-                    console.log("auto subscribed to an event")
-                }
-            });
-            console.log("subscribed to all")
-        }
+        // if(!this.state.loading) {
+        //     let disabled;
+        //     await AsyncStorage.getItem("@allDisabled")
+        //         .then((result) => disabled = (result === "true"));
+        //     console.log(this.state.eventsList);
+        //     if(!disabled) {
+        //         this.state.eventsList.map((event) => {
+        //             console.log("map?");
+        //             let subscriptionStatus;
+        //             let autoStatus;
+        //             AsyncStorage.getItem("@" + event.codename + "auto")
+        //                 .then((result) => autoStatus = (result === "true"));
+        //             console.log("autostatus for " + event.title + " is " + autoStatus.toString());
+        //             if(!autoStatus) {
+        //                 AsyncStorage.getItem("@" + event.codename)
+        //                     .then((result) => subscriptionStatus = (result === "true"));
+        //                 if(!subscriptionStatus)
+        //                 {
+        //                     togglePushNotification(event.title, event.codename, event.start);
+        //                 }
+        //                 console.log("auto subscribed to an event")
+        //             }
+        //         });
+        //         console.log("subscribed to all")
+        //     }
+        // }
     }
     // async componentDidUpdate(prevProps, prevState, snapshot) {
     //     await AsyncStorage.getItem("@6fb367944c3e2fbf48d5d2b64c0ab0bb8bade477")
@@ -140,13 +144,13 @@ export class UpcomingScreen extends PureComponent {
         await this.getUpcoming();
         if(this.reverse) {
             showMessage({
-                message: "Events ordered from oldest to newest",
+                message: i18n.t('list.sort_oldest_first'),
                 backgroundColor: "#003a70",
             });
         }
         else {
             showMessage({
-                message: "Events ordered from newest to oldest",
+                message: i18n.t('list.sort_newest_first'),
                 backgroundColor: "#003a70",
             });
         }
@@ -181,9 +185,16 @@ export class UpcomingScreen extends PureComponent {
             ...data[key]
         }));
         eventsData.map((event) => {
-            if(event.ISO_time){
-                event.start = moment(event.start).format("dddd, MMM DD[, at] HH:mm A");
-                event.end = moment(event.end).format("dddd, MMM DD[, at] HH:mm A");
+            if (event.ISO_time) {
+                if (Localization.locale.toString() === "tr-TR"){
+                    moment.locale('tr');
+                    event.start = moment(event.start).format("dddd, DD MMMM[,] HH:mm");
+                    event.end = moment(event.end).format("dddd, DD MMMM[,] HH:mm");
+                }
+                else {
+                    event.start = moment(event.start).format("dddd, MMM DD[, at] hh:mm A");
+                    event.end = moment(event.end).format("dddd, MMM DD[, at] hh:mm A");
+                }
             }
         });
         if(this.reverse) {
@@ -201,6 +212,33 @@ export class UpcomingScreen extends PureComponent {
             }
         }
         await storeData(eventsData);
+        let disabled;
+        await AsyncStorage.getItem("@allDisabled")
+            .then((result) => disabled = (result === "true"));
+        if(!disabled) {
+            eventsData.map((event) => {
+                console.log("map?");
+                let subscriptionStatus;
+                let autoStatus;
+                AsyncStorage.getItem("@" + event.codename + "auto")
+                    .then((result) => {
+                        autoStatus = (result === "true");
+                        console.log("autostatus for " + event.title + " is " + autoStatus.toString());
+                        if(!autoStatus) {
+                            AsyncStorage.getItem("@" + event.codename)
+                                .then((result) => {
+                                    if(result !== "true") {
+                                        togglePushNotification(event.title, event.codename, event.start);
+                                        console.log("subscriptionStatus is " + (result !== "true").toString());
+                                        console.log("auto subscribed to an event");
+                                        AsyncStorage.setItem("@" + event.codename + "auto", "true");
+                                    }
+                                });
+                            console.log("subscribed to all")
+                        }
+                    });
+            });
+        }
     }
     render() {
         if(!this.state.loading){

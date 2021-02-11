@@ -13,11 +13,13 @@ import NetInfo from "@react-native-community/netinfo";
 import {showMessage} from "react-native-flash-message";
 
 import moment from "moment";
+import 'moment/locale/tr';
 
 import DetailsScreen from './DetailsScreen';
 import EventItem, {PlaceholderEvent, EventItemC} from "./EventItem";
 import {togglePushNotification} from "../../scripts/NotificationsHandler";
-
+import * as Localization from "expo-localization";
+import i18n from '../../scripts/LocalizationHandler'
 
 
 export class CurrentScreen extends PureComponent {
@@ -133,13 +135,13 @@ export class CurrentScreen extends PureComponent {
         await this.getCurrent();
         if(this.reverse) {
             showMessage({
-                message: "Events ordered from oldest to newest",
+                message: i18n.t('list.sort_oldest_first'),
                 backgroundColor: "#003a70",
             });
         }
         else {
             showMessage({
-                message: "Events ordered from newest to oldest",
+                message: i18n.t('list.sort_newest_first'),
                 backgroundColor: "#003a70",
             });
         }
@@ -190,8 +192,15 @@ export class CurrentScreen extends PureComponent {
             }));
             eventsData.map((event) => {
                 if (event.ISO_time) {
-                    event.start = moment(event.start).format("dddd, MMM DD[, at] HH:mm A");
-                    event.end = moment(event.end).format("dddd, MMM DD[, at] HH:mm A");
+                    if (Localization.locale.toString() === "tr-TR"){
+                        moment.locale('tr');
+                        event.start = moment(event.start).format("dddd, DD MMMM[,] HH:mm");
+                        event.end = moment(event.end).format("dddd, DD MMMM[,] HH:mm");
+                    }
+                    else {
+                        event.start = moment(event.start).format("dddd, MMM DD[, at] hh:mm A");
+                        event.end = moment(event.end).format("dddd, MMM DD[, at] hh:mm A");
+                    }
                 }
             });
             if (this.reverse) {

@@ -1,14 +1,15 @@
 import React, {PureComponent, Fragment} from 'react';
 import {View, StyleSheet, ScrollView, Platform, Image, Text} from 'react-native';
 
-import {Divider, Surface, FAB, Button} from 'react-native-paper';
+import {Divider, Surface, FAB, Button, Caption} from 'react-native-paper';
 import Carousel from 'react-native-snap-carousel';
 import { scale, verticalScale, moderateScale, moderateVerticalScale } from 'react-native-size-matters';
 import HTML from "react-native-render-html";
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {togglePushNotification} from '../../scripts/NotificationsHandler'
 import {showMessage} from "react-native-flash-message";
-
+import * as Localization from "expo-localization";
+import i18n from '../../scripts/LocalizationHandler'
 
 const scrollEnabled = Platform.select({ web: true, default: false });
 
@@ -24,13 +25,33 @@ export class DetailsScreen extends PureComponent {
         // console.log(props.route.params);
         // this.navigator = props.route.navigator;
         this.storageKey = "@" + this.event.codename;
-
+        this.prepareStrings();
         // this.notif = new NotificationService();
         // this.notif.create(this.event.title, this.event.codename, this.event.start);
     }
     state={
       isSubscribed: false,
       fabIcon: "bell",
+    }
+    prepareStrings(){
+        if(Localization.locale.toString() === "tr-TR") {
+            this.title = this.event.title_tr;
+            this.type = this.event.type_tr;
+            this.description_html = this.event.description_tr;
+            if(!this.event.ISO_time) {
+                this.start = this.event.start_tr;
+                this.end = this.event.end_tr;
+            }
+        }
+        else {
+            this.title = this.event.title;
+            this.type = this.event.type;
+            this.description_html = this.event.description_html;
+        }
+        if(this.event.ISO_time) {
+            this.start = this.event.start;
+            this.end = this.event.end;
+        }
     }
     async componentDidMount() {
       await AsyncStorage.getItem(this.storageKey)
@@ -66,11 +87,10 @@ export class DetailsScreen extends PureComponent {
                 isSubscribed: (nextStatus === 'true'),
                 fabIcon: (nextStatus === 'true') ? "bell" : "bell-off"
             })
-            await togglePushNotification(this.event.title, this.event.codename, this.event.start);
+            await togglePushNotification(this.title, this.event.codename, this.event.start);
             showMessage({
-                message: this.state.isSubscribed ? "Subscribed to the Event" : "Unsubscribed",
-                description: this.state.isSubscribed ? "You will receive notifications according to your settings." : "" +
-                    "You will not receive notifications.",
+                message: this.state.isSubscribed ? i18n.t('details.subscribed') : i18n.t('details.unsubscribed'),
+                description: this.state.isSubscribed ? i18n.t('details.subscribed_desc') : i18n.t('details.unsubscribed_desc'),
                 position: "top",
                 autoHide: true,
                 icon: "success",
@@ -81,8 +101,8 @@ export class DetailsScreen extends PureComponent {
         }
         else {
             showMessage({
-                message: "Cannot Subscribe to the Event",
-                description: "You disabled all notifications in the settings.",
+                message: i18n.t('details.cannot_sub'),
+                description: i18n.t('details.cannot_sub_desc'),
                 position: "top",
                 autoHide: false,
                 icon: "danger",
@@ -136,23 +156,24 @@ export class DetailsScreen extends PureComponent {
                    <View style={{backgroundColor: this.event.color}}>
                        <Text style={{color: "white", marginLeft: 16,
                            textAlign: "center", marginRight: 16,
-                           marginTop: 4, marginBottom: 4,}}>{this.event.type}</Text>
+                           marginTop: 4, marginBottom: 4,}}>{this.type}</Text>
                    </View>
 
                     <View style={{marginLeft: 16, marginRight: 16, marginBottom: verticalScale(30)}}>
                         <Text style={{fontSize: verticalScale(24), fontWeight: 'bold',
-                            textAlign: "center"}}>{this.event.title}</Text>
+                            textAlign: "center"}}>{this.title}</Text>
                         <Divider style={{marginTop: 12, marginBottom: 12}}/>
 
-                        <Text style={{fontWeight: 'bold'}}>Starts: </Text>
-                        <Text>{this.event.start}</Text>
-                        <Text style={{fontWeight: 'bold'}}>Ends: </Text>
-                        <Text>{this.event.end}</Text>
+                        <Text style={{fontWeight: 'bold'}}>{i18n.t('details.starts')}</Text>
+                        <Text>{this.start}</Text>
+                        <Text style={{fontWeight: 'bold'}}>{i18n.t('details.ends')}</Text>
+                        <Text>{this.end}</Text>
+                        <Caption>{i18n.t('details.localtime_caption')}</Caption>
                         <Divider style={{marginTop: 12, marginBottom: 12}}/>
 
                         <View style={{alignContent: "center"}}>
                             {/*<Text style={{marginBottom: 12}}>{this.event.description}</Text>*/}
-                            <HTML source={{html: this.event.description_html}} style={{marginBottom: 12}}/>
+                            <HTML source={{html: this.description_html}} style={{marginBottom: 12}}/>
                                 {
                                 this.event.graphics === true &&
                                 (

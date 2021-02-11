@@ -7,6 +7,7 @@ import {Button, Card, Title, Paragraph} from 'react-native-paper';
 import {Fade, Placeholder, PlaceholderLine, PlaceholderMedia} from "rn-placeholder";
 import { scale, verticalScale, moderateScale, moderateVerticalScale } from 'react-native-size-matters';
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import i18n from '../../scripts/LocalizationHandler'
 
 export class EventItemC extends React.Component {
     constructor(props) {
@@ -18,9 +19,28 @@ export class EventItemC extends React.Component {
         this.mount = 0;
         this.update = 0;
         this.props = props;
+        this.prepareStrings();
     }
     state={
         buttonIcon: "bell",
+    }
+    prepareStrings(){
+        if(Localization.locale.toString() === "tr-TR") {
+            this.title = this.event.title_tr;
+            this.type = this.event.type_tr;
+            if(!this.event.ISO_time) {
+                this.start = this.event.start_tr;
+                this.end = this.event.end_tr;
+            }
+        }
+        else {
+            this.title = this.event.title;
+            this.type = this.event.type;
+        }
+        if(this.event.ISO_time) {
+            this.start = this.event.start;
+            this.end = this.event.end;
+        }
     }
     shouldComponentUpdate(nextProps, nextState, nextContext) {
         this.buttonIcon = nextProps.notifications ? "bell" : "bell-off";
@@ -69,15 +89,15 @@ export class EventItemC extends React.Component {
                 <Card.Cover source={{ uri: this.event.thumbnail }}
                             style={{height: verticalScale(100)}}/>
                 <Card.Content>
-                    <View style={{backgroundColor: this.event.color, marginLeft: scale(-14), marginRight: scale(-14),
-                    elevation: 5}}>
-                        <Text style={{color: "white", marginTop: 4, marginBottom: 4, marginLeft: 17}}>{this.event.type}</Text>
+                    <View style={{backgroundColor: this.event.color, marginLeft: scale(-14), marginRight: scale(-14)}}>
+                        <Text style={{color: "white", marginTop: verticalScale(3), marginBottom: verticalScale(3),
+                            marginLeft: 17, fontSize: verticalScale(9)}}>{this.type}</Text>
                     </View>
-                    <Title style={{fontSize: verticalScale(15)}}>{this.event.title}</Title>
-                    <Paragraph><Text style={{fontWeight: "bold", fontSize: verticalScale(11)}}>Starts:</Text>
-                        <Text style={{fontSize: verticalScale(11)}}> {this.event.start}</Text></Paragraph>
-                    <Paragraph><Text style={{fontWeight: "bold", fontSize: verticalScale(11)}}>Ends:</Text>
-                        <Text style={{fontSize: verticalScale(11)}}>   {this.event.end}</Text></Paragraph>
+                    <Title style={{fontSize: verticalScale(15)}}>{this.title}</Title>
+                    <Paragraph><Text style={{fontWeight: "bold", fontSize: verticalScale(11)}}>{i18n.t('item.starts')}</Text>
+                        <Text style={{fontSize: verticalScale(11)}}> {this.start}</Text></Paragraph>
+                    <Paragraph><Text style={{fontWeight: "bold", fontSize: verticalScale(11)}}>{i18n.t('item.ends')}</Text>
+                        <Text style={{fontSize: verticalScale(11)}}>   {this.end}</Text></Paragraph>
                 </Card.Content>
             </Card>
         );

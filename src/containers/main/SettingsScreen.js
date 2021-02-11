@@ -8,6 +8,7 @@ import {
     cancelSoonNotificationsAsync,
     cancelStartNotificationsAsync
 } from "../../scripts/NotificationsHandler";
+import i18n from '../../scripts/LocalizationHandler'
 
 export default class SettingsScreen extends Component {
     constructor(props) {
@@ -95,29 +96,29 @@ export default class SettingsScreen extends Component {
         return (
             <View>
                 <List.Item
-                    title="Disable All Notifications"
-                    description="You can restart the app to resubscribe."
+                    title={i18n.t('settings.all_title')}
+                    description={i18n.t('settings.all_desc')}
                     right={props => <Switch value={this.state.isAllSwitchOn} onValueChange={this.onToggleAllSwitch}
                                             color={"#003a70"}  />}
                     titleStyle={{color: 'red'}}
                 />
                 <List.Item
-                    title="Disable Event Start Notifications"
+                    title={i18n.t('settings.start_title')}
                     right={props => <Switch value={this.state.isStartSwitchOn} onValueChange={this.onToggleStartSwitch}
                                             disabled={this.state.isAllSwitchOn} color={"#003a70"} />}
                     style={{opacity: this.state.isAllSwitchOn ? 0.5 : 1}}
                 />
                 <List.Item
-                    title="Disable Event Soon Notifications"
+                    title={i18n.t('settings.soon_title')}
                     right={props => <Switch value={this.state.isSoonSwitchOn} onValueChange={this.onToggleSoonSwitch}
                                             disabled={this.state.isAllSwitchOn} color={"#003a70"} />}
                     style={{opacity: this.state.isAllSwitchOn ? 0.5 : 1}}
                 />
                 <List.Item
-                    title="How many days before do you want to be notified?"
+                    title={i18n.t('settings.days_title')}
                     style={{opacity: (this.state.isAllSwitchOn || this.state.isSoonSwitchOn) ? 0.5 : 1}}
                     description={props =>
-                        <View><Text>This setting will apply on new opt-ins.</Text>
+                        <View><Text>{i18n.t('settings.days_desc')}</Text>
                             <View style={{flexDirection: 'row'}}>
                             <TouchableRipple onPress={() => this.setValue("1")} style={{margin: 6}}
                                              disabled={this.state.isAllSwitchOn || this.state.isSoonSwitchOn}>

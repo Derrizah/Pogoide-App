@@ -1,0 +1,104 @@
+{
+  "en": {
+    "tabs": {
+      "current": "Current",
+      "upcoming": "Upcoming"
+    },
+    "intro": {
+      "title1": "Welcome to Pogoide!",
+      "text1": "All events in one place\nAlways up-to-date",
+      "title2": "Event Details",
+      "text2": "Tap to get all the event details\nDates, features,\nspawns and more",
+      "title3": "Event Notifications",
+      "text3": "Tap the bell icon to\nget notifications both before\nand when an event starts",
+      "title4": "Ready?",
+      "text4": "Get hunting!"
+    },
+    "list": {
+      "sort_oldest_first": "Events ordered from oldest to newest",
+      "sort_newest_first": "Events ordered from newest to oldest"
+    },
+    "item": {
+      "starts": "Starts:",
+      "ends": "Ends:"
+    },
+    "details": {
+      "subscribed": "Subscribed to the Event",
+      "unsubscribed": "Unsubscribed",
+      "subscribed_desc": "You will receive notifications according to your settings.",
+      "unsubscribed_desc": "You will not receive notifications.",
+      "cannot_sub": "Cannot Subscribe to the Event",
+      "cannot_sub_desc": "You disabled all notifications in the settings.",
+      "localtime_caption": "All times are in local time.",
+      "starts": "Starts: ",
+      "ends": "Ends: "
+    },
+    "settings": {
+      "title": "Settings",
+      "all_title": "Disable All Notifications",
+      "all_desc": "After re-enabling, you can restart the app to resubscribe.",
+      "start_title": "Disable Event Start Notifications",
+      "soon_title": "Disable Event Soon Notifications",
+      "days_title": "How many days before do you want to be notified?",
+      "days_desc": "This setting will apply on new opt-ins."
+    },
+    "notifications": {
+      "start_subtitle": "Active Event",
+      "start_body": " has started. Open the app for details.",
+      "soon_title": " will start soon! 📅",
+      "soon_subtitle": "Upcoming Event",
+      "soon_body": " is starting soon. Open the app for details."
+    }
+  },
+  "tr": {
+    "tabs": {
+      "current": "Şimdiki",
+      "upcoming": "Gelecek"
+    },
+    "intro": {
+      "title1": "Pogoide'e Hoşgeldin!",
+      "text1": "Tüm etkinlikler tek yerde\nHer zaman güncel",
+      "title2": "Etkinlik Ayrıntıları",
+      "text2": "Dokunarak etkinlik ayrıntılarına ulaş\nTarihler, özellikler,\ndoğacaklar ve daha fazlası",
+      "title3": "Etkinlik Bildirimleri",
+      "text3": "Çan ikonuna dokun ve\nhem etkinlik başlamadan\nhem de başlarken bildirim al",
+      "title4": "Hazır mısın?",
+      "text4": "Ava başla!"
+    },
+    "list": {
+      "sort_oldest_first": "Etkinlikler eskiden yeniye sıralandı",
+      "sort_newest_first": "Etkinlikler yeniden eskiye sıralandı"
+    },
+    "item": {
+      "starts": "Başlangıç:",
+      "ends": "Bitiş:"
+    },
+    "details": {
+      "subscribed": "Etkinliğe Abone Olundu",
+      "unsubscribed": "Abonelikten Çıkıldı",
+      "subscribed_desc": "Ayarlarına göre bildirim alacaksın.",
+      "unsubscribed_desc": "Bildirim almayacaksın.",
+      "cannot_sub": "Etkinliğe Abone Olunamadı",
+      "cannot_sub_desc": "Ayarlarda bildirimler devre dışı bırakılmış.",
+      "localtime_caption": "Tüm saatler yerel saattir.",
+      "starts": "Başlangıç: ",
+      "ends": "Bitiş: "
+    },
+    "settings": {
+      "title": "Ayarlar",
+      "all_title": "Tüm Bildirimleri Kapat",
+      "all_desc": "Tekrar açtığında, yeniden abone olmak için uygulamayı yeniden başlatabilirsin.",
+      "start_title": "Etkinlik Başlangıç Bildirimlerini Kapat",
+      "soon_title": "Gelecek Etkinlik Bildirimlerini Kapat",
+      "days_title": "Kaç gün önce bildirim almak istiyorsun?",
+      "days_desc": "Bu ayar yeni aboneliklerde geçerli olur."
+    },
+    "notifications": {
+      "start_subtitle": "Şimdiki Etkinlik",
+      "start_body": " başladı. Uygulamayı açıp ayrıntıları görüntüleyebilirsin.",
+      "soon_title": " yakında başlayacak! 📅",
+      "soon_subtitle": "Gelecek Etkinlik",
+      "soon_body": " yakında başlayacak. Uygulamayı açıp ayrıntıları görüntüleyebilirsin."
+    }
+  }
+}

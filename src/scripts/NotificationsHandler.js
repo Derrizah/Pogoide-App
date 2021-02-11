@@ -5,6 +5,7 @@ import {Platform} from "react-native";
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import moment from "moment";
 import {not} from "react-native-reanimated";
+import i18n from './LocalizationHandler'
 
 export async function schedulePushNotification() {
     await Notifications.scheduleNotificationAsync({
@@ -59,8 +60,8 @@ export async function togglePushNotification(title, codename, date){
         if(isStartDisabled === "false") {
             // Start Notification Strings
             const startTitle = title + " 🕹️";
-            const startSubtitle = "Active Event";
-            const startBody = title + " has started. Open the app for details.";
+            const startSubtitle = i18n.t('notifications.start_subtitle');
+            const startBody = title + i18n.t('notifications.start_body');
 
             await Notifications.scheduleNotificationAsync({
                 identifier: startNotifId,
@@ -80,9 +81,9 @@ export async function togglePushNotification(title, codename, date){
             .then((result) => isSoonDisabled = result);
         if(isSoonDisabled === "false") {
             // Soon Notification Strings
-            const soonTitle =  title + " will start soon! 📅";
-            const soonSubtitle = "Upcoming Event";
-            const soonBody = title + " is starting soon. Open the app for details.";
+            const soonTitle =  title + i18n.t('notifications.soon_title');
+            const soonSubtitle = i18n.t('notifications.soon_subtitle');
+            const soonBody = title + i18n.t('notifications.soon_body');
 
             let soonDate;
             await AsyncStorage.getItem("@soonDays")
@@ -122,6 +123,7 @@ export async function cancelAllNotificationsAsync() {
                         console.log("all notifications cancelling error");
                     });
                 console.log(item.identifier.slice(0, -1));
+                AsyncStorage.setItem("@" + item.identifier.slice(0, -1) + "auto", "false");
             }
         });
     await Notifications.cancelAllScheduledNotificationsAsync();

@@ -3,6 +3,7 @@ import {StyleSheet, Text, View} from "react-native";
 
 import { NavigationContainer } from '@react-navigation/native';
 import {createMaterialTopTabNavigator} from "@react-navigation/material-top-tabs";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import createStackNavigator from "@react-navigation/stack/src/navigators/createStackNavigator";
 import firebase from 'firebase/app';
 import 'firebase/database';
@@ -20,7 +21,7 @@ import CurrentStackScreen from './main/CurrentStackScreen'
 import SettingsScreen from './main/SettingsScreen'
 import {SafeAreaContext, SafeAreaProvider, SafeAreaView} from "react-native-safe-area-context";
 import {registerForPushNotificationsAsync} from "../scripts/NotificationsHandler";
-import AsyncStorage from "@react-native-async-storage/async-storage";
+import i18n from '../scripts/LocalizationHandler'
 
 
 const RootStack = createStackNavigator();
@@ -90,7 +91,7 @@ class TabStack extends PureComponent {
             icon: alertsData[0].icon,
             backgroundColor: alertsData[0].bgColor,
             style: {height: scale(80)},
-            duration: 5000,
+            duration: 3000,
         });
         const token = await registerForPushNotificationsAsync();
         let shouldSend = false;
@@ -134,10 +135,10 @@ class TabStack extends PureComponent {
                         elevation: 0,
                     },
                 }}>
-                <Tab.Screen name="Current" component={CurrentStackScreen} initialParams={{
+                <Tab.Screen name={i18n.t('tabs.current')} component={CurrentStackScreen} initialParams={{
                     db: this.db
                 }} />
-                <Tab.Screen name="Upcoming" component={UpcomingStackScreen} initialParams={{
+                <Tab.Screen name={i18n.t('tabs.upcoming')} component={UpcomingStackScreen} initialParams={{
                     db: this.db
                 }} />
             </Tab.Navigator>
@@ -194,7 +195,7 @@ export default function MainNavigator() {
                             }}>
                             {previous ? <Appbar.BackAction onPress={navigation.goBack} /> : null}
                             <Appbar.Content title={scene.route.name}/>
-                            {!previous ? <Appbar.Action icon="cog" onPress={() => navigation.navigate('Settings')}/> : null}
+                            {!previous ? <Appbar.Action icon="cog" onPress={() => navigation.navigate(i18n.t('settings.title'))}/> : null}
                             {/*<Appbar.Action icon="settings" onPress={() => navigation.navigate}/>*/}
                         </Appbar.Header>
                     );
@@ -226,12 +227,13 @@ export default function MainNavigator() {
                                   //     },
                                   // }}
                     />
-                <RootStack.Screen name="Settings" component={SettingsScreen}
+                <RootStack.Screen name={i18n.t('settings.title')} component={SettingsScreen}
                                   options={{
                                       headerStyle: {
                                           backgroundColor: '#003a70',
                                       },
                                       headerTintColor: "#FFFFFF",
+                                      title: i18n.t('settings.title')
                                   }}
                                       />
             </RootStack.Navigator>

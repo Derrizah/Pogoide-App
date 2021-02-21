@@ -37,7 +37,11 @@ export default class SettingsScreen extends Component {
         await AsyncStorage.getItem("@soonDisabled")
             .then((result)=>this.setState({isSoonSwitchOn: (result === "true")}));
         await AsyncStorage.getItem("@soonDays")
-            .then((result)=>this.setState({soonNotifyDays: result}));
+            .then((result)=> {
+                if(result != null) {
+                    this.setState({soonNotifyDays: result});
+                }
+            });
         console.log("allDisabled is " + this.state.isAllSwitchOn);
     }
     onToggleAllSwitch() {

@@ -12,6 +12,10 @@
       "package": "com.appguyinc.pogoide",
       "googleServicesFile": "./google-services.json",
       "useNextNotificationsApi": true,
+    },
+    "ios": {
+      "bundleIdentifier": "com.appguyinc.pogoide",
+      "googleServicesFile": "./GoogleService-Info.plist"
     }
   }
 }

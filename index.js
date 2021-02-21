@@ -12,7 +12,7 @@ import FlashMessage from "react-native-flash-message";
 import {scale, verticalScale} from "react-native-size-matters";
 import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
 import * as Notifications from 'expo-notifications';
-import {registerForPushNotificationsAsync} from "./src/scripts/NotificationsHandler";
+import {cancelAllNotificationsAsync, registerForPushNotificationsAsync} from "./src/scripts/NotificationsHandler";
 import AppIntroSlider from 'react-native-app-intro-slider';
 import {IconButton} from "react-native-paper";
 import { AnimatedSVGPaths } from "react-native-svg-animations";
@@ -39,9 +39,19 @@ export default class Root extends Component {
     state = {
         showRealApp: false
     }
-    componentDidMount() {
-        AsyncStorage.getItem("@shownIntro")
+    async componentDidMount() {
+        // if (__DEV__) {
+        //     AsyncStorage.clear();
+        //     await cancelAllNotificationsAsync();
+        // }
+        await AsyncStorage.getItem("@shownIntro")
             .then( (result) => this.setState({showRealApp: (result === "true")}));
+        await AsyncStorage.getItem("@soonDays")
+            .then((result)=> {
+                if(result == null) {
+                    AsyncStorage.setItem("@soonDays", "5");
+                }
+            });
     }
     _renderItem = ({ item }) => {
         return (

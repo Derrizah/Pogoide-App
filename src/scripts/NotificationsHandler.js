@@ -19,19 +19,18 @@ export async function schedulePushNotification() {
 }
 
 export async function togglePushNotification(title, codename, date){
-    let subscriptionStatus;
-
     // Prepping identifiers
     let soonNotifId = codename + "1";
     let startNotifId = codename + "2";
 
-    await AsyncStorage.getItem("@" + codename)
-        .then((result) => subscriptionStatus = result);
+    const subscriptionStatus = await AsyncStorage.getItem("@" + codename);
+    // AsyncStorage.getItem("@" + codename)
+    //     .then((result) => subscriptionStatus = result);
     console.log("subscriptionStatus is " + subscriptionStatus);
 
     if(subscriptionStatus === "true") {
         console.log("cancelling...");
-        await AsyncStorage.setItem("@" + codename, "false")
+        AsyncStorage.setItem("@" + codename, "false")
             .catch(err => {
                 console.log("Subscription status saving error");
             });
@@ -45,7 +44,10 @@ export async function togglePushNotification(title, codename, date){
             });
 
         // Date and Time Parameters
+        moment.locale('en');
         const dateObject = moment(date, "dddd, MMM DD[, at] HH:mm A");
+        // console.log(typeof dateObject);
+        // console.log("dateobject is " + dateObject + " for " + title);
         const year = moment(dateObject).year();
         const month = moment(dateObject).month();
         const day = moment(dateObject).day();
@@ -53,64 +55,69 @@ export async function togglePushNotification(title, codename, date){
         const minute= moment(dateObject).minute();
 
         const startDate = moment(dateObject).toDate();
+        // const startDate = date;
+        const isStartDisabled = await AsyncStorage.getItem("@startDisabled");
+    //     // AsyncStorage.getItem("@startDisabled")
+    //     //     .then((result) => {
+                if(isStartDisabled !== "true") {
+                    // Start Notification Strings
+                    const startTitle = title + " 🕹️";
+                    const startSubtitle = i18n.t('notifications.start_subtitle');
+                    const startBody = title + i18n.t('notifications.start_body');
 
-        let isStartDisabled;
-        await AsyncStorage.getItem("@startDisabled")
-            .then((result) => isStartDisabled = result);
-        if(isStartDisabled === "false") {
-            // Start Notification Strings
-            const startTitle = title + " 🕹️";
-            const startSubtitle = i18n.t('notifications.start_subtitle');
-            const startBody = title + i18n.t('notifications.start_body');
+                    await Notifications.scheduleNotificationAsync({
+                        identifier: startNotifId,
+                        content: {
+                            title: startTitle,
+                            subtitle: startSubtitle,
+                            body: startBody,
+                        },
+                        trigger: {
+                            channelId: "start-channel",
+                            date: startDate,
+                        },
+                    });
+                    console.log("startnotif is a go");
+                }
+    //         // });
+        const isSoonDisabled = await AsyncStorage.getItem("@soonDisabled");
+    //     // AsyncStorage.getItem("@soonDisabled")
+    //     //     .then((result) => {
+                if(isSoonDisabled !== "true") {
+                    // Soon Notification Strings
+                    const soonTitle =  title + i18n.t('notifications.soon_title');
+                    const soonSubtitle = i18n.t('notifications.soon_subtitle');
+                    const soonBody = title + i18n.t('notifications.soon_body');
 
-            await Notifications.scheduleNotificationAsync({
-                identifier: startNotifId,
-                content: {
-                    title: startTitle,
-                    subtitle: startSubtitle,
-                    body: startBody,
-                },
-                trigger: {
-                    channelId: "start-channel",
-                    date: startDate
-                },
-            });
-        }
-        let isSoonDisabled;
-        await AsyncStorage.getItem("@soonDisabled")
-            .then((result) => isSoonDisabled = result);
-        if(isSoonDisabled === "false") {
-            // Soon Notification Strings
-            const soonTitle =  title + i18n.t('notifications.soon_title');
-            const soonSubtitle = i18n.t('notifications.soon_subtitle');
-            const soonBody = title + i18n.t('notifications.soon_body');
-
-            let soonDate;
-            await AsyncStorage.getItem("@soonDays")
-                .then((result) => {
-                    soonDate = moment(dateObject).subtract(parseInt(result), 'days').toDate();
-                    console.log(soonDate);
-                })
-                .catch(err => {
-                    console.log("Could not get soonDays from async storage.");
-                   soonDate =  moment(dateObject).subtract(5, 'days').toDate();
-                });
-            if(soonDate > Date.now()) {
-                console.log("soon notif is a go");
-                await Notifications.scheduleNotificationAsync({
-                    identifier: soonNotifId,
-                    content: {
-                        title: soonTitle,
-                        subtitle: soonSubtitle,
-                        body: soonBody,
-                    },
-                    trigger: {
-                        channelId: "soon-channel",
-                        date: soonDate,
-                    }
-                });
-            }
-        }
+                    let soonDate;
+                    const soonDays = await AsyncStorage.getItem("@soonDays");
+                    // AsyncStorage.getItem("@soonDays")
+                    //     .then((result) => {
+                            soonDate = moment(dateObject).subtract(parseInt(soonDays), 'days').toDate();
+                            console.log("soonDate " + soonDate);
+                            if(soonDate > Date.now()) {
+                                console.log("soon notif is a go");
+                                await Notifications.scheduleNotificationAsync({
+                                    identifier: soonNotifId,
+                                    content: {
+                                        title: soonTitle,
+                                        subtitle: soonSubtitle,
+                                        body: soonBody,
+                                    },
+                                    trigger: {
+                                        channelId: "soon-channel",
+                                        date: soonDate,
+                                    }
+                                });
+                            }
+                        // })
+                        // .catch(err => {
+                        //     console.log("Could not get soonDays from async storage.");
+                        //     soonDate =  moment(dateObject).subtract(5, 'days').toDate();
+                        // });
+                }
+    //         // });
+    //
     }
 }
 

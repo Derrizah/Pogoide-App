@@ -184,16 +184,28 @@ export class UpcomingScreen extends PureComponent {
             key,
             ...data[key]
         }));
+
         eventsData.map((event) => {
             if (event.ISO_time) {
-                if (Localization.locale.toString() === "tr-TR"){
+                if (Localization.locale.toString() === "tr-TR") {
                     moment.locale('tr');
-                    event.start = moment(event.start).format("dddd, DD MMMM[,] HH:mm");
-                    event.end = moment(event.end).format("dddd, DD MMMM[,] HH:mm");
+                    event.start_tr = moment(event.start).format("dddd, DD MMMM[,] HH:mm");
+                    event.end_tr = moment(event.end).format("dddd, DD MMMM[,] HH:mm");
+                    if (event.start_tr === "Invalid date") {
+                        event.start_tr = i18n.t('list.unknown_date');
+                    }
+                    if (event.end_tr === "Invalid date") {
+                        event.end_tr = i18n.t('list.unknown_date');
+                    }
                 }
-                else {
-                    event.start = moment(event.start).format("dddd, MMM DD[, at] hh:mm A");
-                    event.end = moment(event.end).format("dddd, MMM DD[, at] hh:mm A");
+                moment.locale('en');
+                event.start = moment(event.start).format("dddd, MMM DD[, at] HH:mm A");
+                event.end = moment(event.end).format("dddd, MMM DD[, at] HH:mm A");
+                if(event.start === "Invalid date") {
+                    event.start = i18n.t('list.unknown_date');
+                }
+                if(event.end === "Invalid date") {
+                    event.end = i18n.t('list.unknown_date');
                 }
             }
         });
@@ -217,7 +229,6 @@ export class UpcomingScreen extends PureComponent {
             .then((result) => disabled = (result === "true"));
         if(!disabled) {
             eventsData.map((event) => {
-                console.log("map?");
                 let subscriptionStatus;
                 let autoStatus;
                 AsyncStorage.getItem("@" + event.codename + "auto")
@@ -228,13 +239,13 @@ export class UpcomingScreen extends PureComponent {
                             AsyncStorage.getItem("@" + event.codename)
                                 .then((result) => {
                                     if(result !== "true") {
+                                        console.log("we sent " + event.start + " to notifhandler")
                                         togglePushNotification(event.title, event.codename, event.start);
                                         console.log("subscriptionStatus is " + (result !== "true").toString());
                                         console.log("auto subscribed to an event");
                                         AsyncStorage.setItem("@" + event.codename + "auto", "true");
                                     }
                                 });
-                            console.log("subscribed to all")
                         }
                     });
             });

@@ -20,7 +20,7 @@ import UpcomingStackScreen from './main/UpcomingStackScreen'
 import CurrentStackScreen from './main/CurrentStackScreen'
 import SettingsScreen from './main/SettingsScreen'
 import {SafeAreaContext, SafeAreaProvider, SafeAreaView} from "react-native-safe-area-context";
-import {registerForPushNotificationsAsync} from "../scripts/NotificationsHandler";
+import {cancelAllNotificationsAsync, registerForPushNotificationsAsync} from "../scripts/NotificationsHandler";
 import i18n from '../scripts/LocalizationHandler'
 
 

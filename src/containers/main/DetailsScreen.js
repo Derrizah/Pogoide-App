@@ -38,17 +38,13 @@ export class DetailsScreen extends PureComponent {
             this.title = this.event.title_tr;
             this.type = this.event.type_tr;
             this.description_html = this.event.description_tr;
-            if(!this.event.ISO_time) {
-                this.start = this.event.start_tr;
-                this.end = this.event.end_tr;
-            }
+            this.start = this.event.start_tr;
+            this.end = this.event.end_tr;
         }
         else {
             this.title = this.event.title;
             this.type = this.event.type;
             this.description_html = this.event.description_html;
-        }
-        if(this.event.ISO_time) {
             this.start = this.event.start;
             this.end = this.event.end;
         }

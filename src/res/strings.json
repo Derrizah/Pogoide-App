@@ -16,7 +16,8 @@
     },
     "list": {
       "sort_oldest_first": "Events ordered from oldest to newest",
-      "sort_newest_first": "Events ordered from newest to oldest"
+      "sort_newest_first": "Events ordered from newest to oldest",
+      "unknown_date": "Unknown"
     },
     "item": {
       "starts": "Starts:",
@@ -67,7 +68,8 @@
     },
     "list": {
       "sort_oldest_first": "Etkinlikler eskiden yeniye sıralandı",
-      "sort_newest_first": "Etkinlikler yeniden eskiye sıralandı"
+      "sort_newest_first": "Etkinlikler yeniden eskiye sıralandı",
+      "unknown_date": "Bilinmiyor"
     },
     "item": {
       "starts": "Başlangıç:",

@@ -28,16 +28,12 @@ export class EventItemC extends React.Component {
         if(Localization.locale.toString() === "tr-TR") {
             this.title = this.event.title_tr;
             this.type = this.event.type_tr;
-            if(!this.event.ISO_time) {
-                this.start = this.event.start_tr;
-                this.end = this.event.end_tr;
-            }
+            this.start = this.event.start_tr;
+            this.end = this.event.end_tr;
         }
         else {
             this.title = this.event.title;
             this.type = this.event.type;
-        }
-        if(this.event.ISO_time) {
             this.start = this.event.start;
             this.end = this.event.end;
         }

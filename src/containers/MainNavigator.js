@@ -73,26 +73,47 @@ class TabStack extends PureComponent {
     // }   catch(err){
     //         console.log("Error fetching data---------", err);
     //     }
-        let data = [];
-        const current = this.db.ref('/alerts');
-        await current.once('value').then((snapshot) => {
-            data = snapshot.val();
-        })
-        const alertsData = Object.keys(data).map(key => ({
-            key,
-            ...data[key]
-        }));
-        showMessage({
-            message: alertsData[0].title,
-            description: alertsData[0].text,
-            type: alertsData[0].type,
-            position: alertsData[0].position,
-            autoHide: alertsData[0].autoHide,
-            icon: alertsData[0].icon,
-            backgroundColor: alertsData[0].bgColor,
-            style: {height: scale(80)},
-            duration: 3000,
-        });
+    //     let data = [];
+    //     const current = this.db.ref('/alerts');
+    //     await current.once('value').then((snapshot) => {
+    //         data = snapshot.val();
+    //     })
+    //     const alertsData = Object.keys(data).map(key => ({
+    //         key,
+    //         ...data[key]
+    //     }));
+
+        const brands = ["xiaomi","oneplus","huawei"];
+        if(brands.some(keyword => Device.brand.toLowerCase().includes(keyword))) {
+            let warningShown = false;
+            AsyncStorage.getItem("@batt_optim_warning")
+                .then((result) => warningShown = (result === "true"));
+            if (!warningShown) {
+                showMessage({
+                    message: i18n.t('main.batt_optim_title'),
+                    description: i18n.t('main.batt_optim_desc'),
+                    type: "danger",
+                    position: "bottom",
+                    autoHide: false,
+                    backgroundColor: "#ff4040",
+                    style: {height: scale(180)},
+                });
+                AsyncStorage.setItem("@batt_optim_warning", "true");
+            }
+        }
+        // else {
+        //     showMessage({
+        //         message: alertsData[0].title,
+        //         description: alertsData[0].text,
+        //         type: alertsData[0].type,
+        //         position: alertsData[0].position,
+        //         autoHide: alertsData[0].autoHide,
+        //         icon: alertsData[0].icon,
+        //         backgroundColor: alertsData[0].bgColor,
+        //         style: {height: scale(80)},
+        //         duration: 2000,
+        //     });
+        // }
         const token = await registerForPushNotificationsAsync();
         let shouldSend = false;
         await AsyncStorage.getItem("@sentToken")
@@ -128,10 +149,10 @@ class TabStack extends PureComponent {
             <Tab.Navigator
                 tabBarOptions={{
                     activeTintColor: 'white',
-                    inactiveTintColor: 'gray',
+                    inactiveTintColor: '#a2a2a2',
                     indicatorStyle: {backgroundColor: "white"},
                     style:{
-                        backgroundColor:"#003a70",
+                        backgroundColor:"#c62727",
                         elevation: 0,
                     },
                 }}>
@@ -168,7 +189,7 @@ class TabStack extends PureComponent {
 //
 //                                           return (
 //                                               <Appbar.Header
-//                                                   style={{backgroundColor:"#003a70"}}>
+//                                                   style={{backgroundColor:"#c62727"}}>
 //                                                   <Appbar.Content title="Pogoide"/>
 //                                                   <Appbar.Action icon="settings" onPress={() => navigation.push('Settings')}/>
 //                                                   {/*<Appbar.Action icon="settings" onPress={() => navigation.navigate}/>*/}
@@ -190,7 +211,7 @@ export default function MainNavigator() {
                     return (
                         <Appbar.Header
                             style={{
-                                backgroundColor:"#003a70",
+                                backgroundColor:"#c62727",
                                 elevation: 0,
                             }}>
                             {previous ? <Appbar.BackAction onPress={navigation.goBack} /> : null}
@@ -216,7 +237,7 @@ export default function MainNavigator() {
                                   //         return (
                                   //             <Appbar.Header
                                   //                 style={{
-                                  //                     backgroundColor:"#003a70",
+                                  //                     backgroundColor:"#c62727",
                                   //                     elevation: 0,
                                   //                 }}>
                                   //                 <Appbar.Content title="Pogoide"/>
@@ -230,7 +251,7 @@ export default function MainNavigator() {
                 <RootStack.Screen name={i18n.t('settings.title')} component={SettingsScreen}
                                   options={{
                                       headerStyle: {
-                                          backgroundColor: '#003a70',
+                                          backgroundColor: '#c62727',
                                       },
                                       headerTintColor: "#FFFFFF",
                                       title: i18n.t('settings.title')

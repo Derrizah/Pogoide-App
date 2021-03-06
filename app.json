@@ -1,17 +1,31 @@
 {
   "name": "GoBeyond",
-  "displayName": "GoBeyond",
+  "displayName": "Pogoide",
   "expo": {
-    "name": "GoBeyond",
+    "name": "Pogoide",
     "slug": "GoBeyond",
     "version": "1.0.0",
     "assetBundlePatterns": [
       "**/*"
     ],
+    "icon": "./src/res/appicon.png",
+    "splash": {
+      "image": "./src/res/appsplash.png"
+    },
+    "androidNavigationBar": {
+      "backgroundColor": "#c62727",
+    },
+    "notification": {
+      "icon": "./src/res/appnotif.png"
+    },
     "android": {
       "package": "com.appguyinc.pogoide",
       "googleServicesFile": "./google-services.json",
       "useNextNotificationsApi": true,
+      "adaptiveIcon": {
+        "foregroundImage": "./src/res/appicontrans.png",
+        "backgroundColor": "#ffffff"
+      }
     },
     "ios": {
       "bundleIdentifier": "com.appguyinc.pogoide",

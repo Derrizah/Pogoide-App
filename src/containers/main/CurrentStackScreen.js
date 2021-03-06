@@ -63,7 +63,7 @@ export class CurrentScreen extends PureComponent {
         await AsyncStorage.getItem('@sort_option')
             .then((result) => this.reverse = result)
             .catch(err => console.log("Could not get sorting option in current screen"));
-        await this.checkConnection();
+        // await this.checkConnection();
         NetInfo.fetch().then(state => {
             if(state.isConnected){
                 this.getCurrent();
@@ -111,8 +111,8 @@ export class CurrentScreen extends PureComponent {
             .catch(err => this.notifications = "false");
 
         return <TouchableRipple onPress={() => this.props.navigation.push('Details', {event: item, eventType: "current"})}
-                                rippleColor="rgba(0, 22.75, 43.92, .6)"
-                                underlayColor="rgba(0, 22.75, 43.92, .6)"
+                                rippleColor="rgba(198, 39, 39, .4)"
+                                underlayColor="rgba(198, 39, 39, .4)"
         >
             {/*<EventItem*/}
             {/*    event={item}*/}
@@ -136,13 +136,13 @@ export class CurrentScreen extends PureComponent {
         if(this.reverse) {
             showMessage({
                 message: i18n.t('list.sort_oldest_first'),
-                backgroundColor: "#003a70",
+                backgroundColor: "#c62727",
             });
         }
         else {
             showMessage({
                 message: i18n.t('list.sort_newest_first'),
-                backgroundColor: "#003a70",
+                backgroundColor: "#c62727",
             });
         }
     }
@@ -250,7 +250,7 @@ export class CurrentScreen extends PureComponent {
             const dataLoaded = await getData();
             showMessage({
                 message: "got Data?",
-                backgroundColor: "#003a70",
+                backgroundColor: "#c62727",
             });
             if (this.reverse) {
                 this.setState({eventsList: dataLoaded.reverse(), loading: false, refreshing: false});
@@ -269,7 +269,7 @@ export class CurrentScreen extends PureComponent {
                             margin: 16,
                             right: 0,
                             bottom: 0,
-                            backgroundColor: "#003a70",
+                            backgroundColor: "#c62727",
                             zIndex: 1
                         }}
                         medium

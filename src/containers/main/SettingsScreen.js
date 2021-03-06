@@ -1,7 +1,18 @@
 import React, {Component} from 'react';
 import { View, StyleSheet } from 'react-native';
 
-import { Text, TouchableRipple, List, Switch, Portal, Surface } from 'react-native-paper';
+import {
+    Text,
+    TouchableRipple,
+    List,
+    Switch,
+    Portal,
+    Surface,
+    Caption,
+    Provider,
+    Modal,
+    Title, Button
+} from 'react-native-paper';
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import {
     cancelAllNotificationsAsync,
@@ -9,6 +20,7 @@ import {
     cancelStartNotificationsAsync
 } from "../../scripts/NotificationsHandler";
 import i18n from '../../scripts/LocalizationHandler'
+import {showMessage} from "react-native-flash-message";
 
 export default class SettingsScreen extends Component {
     constructor(props) {
@@ -28,6 +40,7 @@ export default class SettingsScreen extends Component {
         isAllSwitchOn: false,
         isStartSwitchOn: false,
         isSoonSwitchOn: false,
+        notifModalVisible: false,
     }
     async componentDidMount() {
         await AsyncStorage.getItem("@allDisabled")
@@ -96,26 +109,50 @@ export default class SettingsScreen extends Component {
             () => this.setState({soonNotifyDays: value})
         );
     }
+    toggleModal(){
+        this.setState({notifModalVisible: !this.state.notifModalVisible});
+    }
+    resetNotifications(){
+        this.onToggleAllSwitch();
+        setTimeout(() => { this.onToggleAllSwitch() }, 500);
+        // this.onToggleAllSwitch();
+        this.toggleModal();
+        showMessage({
+            message: i18n.t('settings.notif_reset'),
+            type: "success",
+            duration: 2000,
+        });
+    }
     render(){
         return (
+            <Provider>
+                <Portal>
+                    <Modal visible={this.state.notifModalVisible} onDismiss={() => this.toggleModal()} contentContainerStyle={{backgroundColor: 'white', padding: 20}}>
+                        <Title>{i18n.t('settings.no_notif')}</Title>
+                        <Text>{i18n.t('settings.no_notif_desc')}</Text>
+                        <Button icon="calendar" mode="contained" onPress={() => this.resetNotifications()} color="#c62727">
+                            {i18n.t('settings.no_notif_but')}
+                        </Button>
+                    </Modal>
+                </Portal>
             <View>
                 <List.Item
                     title={i18n.t('settings.all_title')}
                     description={i18n.t('settings.all_desc')}
                     right={props => <Switch value={this.state.isAllSwitchOn} onValueChange={this.onToggleAllSwitch}
-                                            color={"#003a70"}  />}
+                                            color={"#c62727"}  />}
                     titleStyle={{color: 'red'}}
                 />
                 <List.Item
                     title={i18n.t('settings.start_title')}
                     right={props => <Switch value={this.state.isStartSwitchOn} onValueChange={this.onToggleStartSwitch}
-                                            disabled={this.state.isAllSwitchOn} color={"#003a70"} />}
+                                            disabled={this.state.isAllSwitchOn} color={"#c62727"} />}
                     style={{opacity: this.state.isAllSwitchOn ? 0.5 : 1}}
                 />
                 <List.Item
                     title={i18n.t('settings.soon_title')}
                     right={props => <Switch value={this.state.isSoonSwitchOn} onValueChange={this.onToggleSoonSwitch}
-                                            disabled={this.state.isAllSwitchOn} color={"#003a70"} />}
+                                            disabled={this.state.isAllSwitchOn} color={"#c62727"} />}
                     style={{opacity: this.state.isAllSwitchOn ? 0.5 : 1}}
                 />
                 <List.Item
@@ -202,8 +239,15 @@ export default class SettingsScreen extends Component {
                                 </Surface>
                             </TouchableRipple>
                         </View></View>}/>
+                        <TouchableRipple onPress={() => this.toggleModal()}>
+                <List.Item
+                    title={i18n.t('settings.no_notif')}/></TouchableRipple>
+                <List.Item
+                    title="Version v0.9.0"
+                    style={{opacity: 0.3}}
+                />
                 {
                     __DEV__
                 }
-            </View>)
+            </View></Provider>)
 }}

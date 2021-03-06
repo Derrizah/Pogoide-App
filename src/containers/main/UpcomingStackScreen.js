@@ -47,7 +47,7 @@ export class UpcomingScreen extends PureComponent {
         await AsyncStorage.getItem('@sort_option')
             .then((result) => this.reverse = result)
             .catch(err => console.log("Could not get sorting option in current screen"));
-        await this.checkConnection();
+        // await this.checkConnection();
         NetInfo.fetch().then(state => {
             if(state.isConnected){
                 this.getUpcoming();
@@ -124,8 +124,8 @@ export class UpcomingScreen extends PureComponent {
             .catch(err => this.notifications = "false");
 
         return <TouchableRipple onPress={() => this.props.navigation.push('Details', {event: item, eventType: "upcoming"})}
-                                rippleColor="rgba(0, 22.75, 43.92, .6)"
-                                underlayColor="rgba(0, 22.75, 43.92, .6)"
+                                rippleColor="rgba(198, 39, 39, .4)"
+                                underlayColor="rgba(198, 39, 39, .4)"
         >
             <EventItemC
                 itemType={""}
@@ -145,13 +145,13 @@ export class UpcomingScreen extends PureComponent {
         if(this.reverse) {
             showMessage({
                 message: i18n.t('list.sort_oldest_first'),
-                backgroundColor: "#003a70",
+                backgroundColor: "#c62727",
             });
         }
         else {
             showMessage({
                 message: i18n.t('list.sort_newest_first'),
-                backgroundColor: "#003a70",
+                backgroundColor: "#c62727",
             });
         }
     }
@@ -240,7 +240,14 @@ export class UpcomingScreen extends PureComponent {
                                 .then((result) => {
                                     if(result !== "true") {
                                         console.log("we sent " + event.start + " to notifhandler")
-                                        togglePushNotification(event.title, event.codename, event.start);
+                                        let title;
+                                        if (Localization.locale.toString() === "tr-TR") {
+                                            title = event.title_tr;
+                                        }
+                                        else {
+                                            title = event.title;
+                                        }
+                                        togglePushNotification(title, event.codename, event.start);
                                         console.log("subscriptionStatus is " + (result !== "true").toString());
                                         console.log("auto subscribed to an event");
                                         AsyncStorage.setItem("@" + event.codename + "auto", "true");
@@ -260,7 +267,7 @@ export class UpcomingScreen extends PureComponent {
                             margin: 16,
                             right: 0,
                             bottom: 0,
-                            backgroundColor: "#003a70",
+                            backgroundColor: "#c62727",
                             zIndex: 1
                         }}
                         medium

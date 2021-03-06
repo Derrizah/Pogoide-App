@@ -140,6 +140,7 @@ export class DetailsScreen extends PureComponent {
                             elevation:4,
                             zIndex: 1}}
                         medium
+                        color="#ffffff"
                         icon={this.state.fabIcon} // bell  bell-off
                         onPress={async () => await this.toggleSubscription()}/>
                 )}

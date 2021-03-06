@@ -14,6 +14,10 @@
       "title4": "Ready?",
       "text4": "Get hunting!"
     },
+    "main": {
+      "batt_optim_title": "Attention Required",
+      "batt_optim_desc": "Your device is known to break notifications served by Pogoide. Please disable battery optimization for this app. Then, reset notifications in the settings."
+    },
     "list": {
       "sort_oldest_first": "Events ordered from oldest to newest",
       "sort_newest_first": "Events ordered from newest to oldest",
@@ -41,7 +45,11 @@
       "start_title": "Disable Event Start Notifications",
       "soon_title": "Disable Event Soon Notifications",
       "days_title": "How many days before do you want to be notified?",
-      "days_desc": "This setting will apply on new opt-ins."
+      "days_desc": "This setting will apply on new opt-ins.",
+      "no_notif": "Not receiving notifications?",
+      "no_notif_desc": "If you are not receiving notifications even though you're subscribed to events, please disable battery optimization for this app. \n\nThen click the button below.\n\n",
+      "no_notif_but": "Reset Notifications",
+      "notif_reset": "Reset successful."
     },
     "notifications": {
       "start_subtitle": "Active Event",
@@ -65,6 +73,10 @@
       "text3": "Çan ikonuna dokun ve\nhem etkinlik başlamadan\nhem de başlarken bildirim al",
       "title4": "Hazır mısın?",
       "text4": "Ava başla!"
+    },
+    "main": {
+      "batt_optim_title": "Dikkat",
+      "batt_optim_desc": "Cihazının Pogoide bildirimlerinin düzgün çalışmasını engellediği biliniyor. Lütfen bu uygulama için batarya optimizasyonunu kapat. \n\nSonra, uygulama ayarlarından bildirimleri sıfırla."
     },
     "list": {
       "sort_oldest_first": "Etkinlikler eskiden yeniye sıralandı",
@@ -93,7 +105,11 @@
       "start_title": "Etkinlik Başlangıç Bildirimlerini Kapat",
       "soon_title": "Gelecek Etkinlik Bildirimlerini Kapat",
       "days_title": "Kaç gün önce bildirim almak istiyorsun?",
-      "days_desc": "Bu ayar yeni aboneliklerde geçerli olur."
+      "days_desc": "Bu ayar yeni aboneliklerde geçerli olur.",
+      "no_notif": "Bildirimler gelmiyor mu?",
+      "no_notif_desc": "Etkinliklere üye olmana rağmen bildirimler gelmiyorsa lütfen bu uygulama için batarya optimizasyonlarını kapat. Sonra aşağıdaki butona tıkla.\n\n",
+      "no_notif_but": "Bildirimleri Sıfırla",
+      "notif_reset": "Başarıyla sıfırlandı."
     },
     "notifications": {
       "start_subtitle": "Şimdiki Etkinlik",

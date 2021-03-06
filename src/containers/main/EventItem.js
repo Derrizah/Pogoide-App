@@ -76,7 +76,7 @@ export class EventItemC extends React.Component {
                 this.itemType === 'upcoming' &&
                 (
                     <Button icon={this.buttonIcon}
-                        mode="contained" color="#003a70" style={{
+                        mode="contained" color="#c62727" style={{
                         position: "absolute",
                         right: -20,
                         top: 0,
@@ -119,7 +119,7 @@ function EventItemF({item_type, event}) {
             {
                 item_type === 'upcoming' &&
                 (
-            <Button icon={buttonIcon} mode="contained" color="#003a70" style={{
+            <Button icon={buttonIcon} mode="contained" color="#c62727" style={{
                 position: "absolute",
                 right: -20,
                 top: 0,
@@ -146,7 +146,7 @@ const EventItem = ({event, buttonIcon}) => (
             margin: 8,
         }}
     >
-        <Button icon={buttonIcon} mode="contained" color="#003a70" style={{
+        <Button icon={buttonIcon} mode="contained" color="#c62727" style={{
             position: "absolute",
             right: -20,
             top: 0,

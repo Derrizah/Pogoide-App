@@ -113,7 +113,7 @@ export default class Root extends Component {
                     {/*<SafeAreaView/>*/}
                     <View style={{flex: 1}}>
                         <MainNavigator/>
-                        <FlashMessage position="bottom" icon="info" backgroundColor="#003a70"
+                        <FlashMessage position="bottom" icon="info" backgroundColor="#c62727"
                                       style={{height: scale(60)}}/>
                     </View>
                 </Fragment></SafeAreaProvider>
@@ -162,7 +162,7 @@ const slides = [
         title: i18n.t('intro.title4'),
         text: i18n.t('intro.text4'),
         image: require('./src/res/images/running-shoes.png'),
-        backgroundColor: '#003a70',
+        backgroundColor: '#c62727',
     },
 ];
 

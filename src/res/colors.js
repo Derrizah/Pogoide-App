@@ -1,7 +1,7 @@
 const colors = {
     // MAIN BACKGROUND
     background: '#ffffff',
-    tabBackground: '#003a70',
+    tabBackground: '#c62727',
     // TEXT
     text: '#000',
     textFaded1: '#ddd',

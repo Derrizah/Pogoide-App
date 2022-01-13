@@ -127,10 +127,11 @@ export default class SettingsScreen extends Component {
         return (
             <Provider>
                 <Portal>
-                    <Modal visible={this.state.notifModalVisible} onDismiss={() => this.toggleModal()} contentContainerStyle={{backgroundColor: 'white', padding: 20}}>
+                    <Modal visible={this.state.notifModalVisible} onDismiss={() => this.toggleModal()} contentContainerStyle={{backgroundColor: 'white', padding: 20, margin: 20}}>
                         <Title>{i18n.t('settings.no_notif')}</Title>
                         <Text>{i18n.t('settings.no_notif_desc')}</Text>
-                        <Button icon="calendar" mode="contained" onPress={() => this.resetNotifications()} color="#c62727">
+                        <Button icon="calendar" mode="contained" onPress={() => this.resetNotifications()} color="#c62727"
+                                style={{marginTop: 10, marginLeft: 20, marginRight: 20, marginBottom: 0}}>
                             {i18n.t('settings.no_notif_but')}
                         </Button>
                     </Modal>
@@ -243,7 +244,7 @@ export default class SettingsScreen extends Component {
                 <List.Item
                     title={i18n.t('settings.no_notif')}/></TouchableRipple>
                 <List.Item
-                    title="Version v0.9.0"
+                    title="Version v0.9.2"
                     style={{opacity: 0.3}}
                 />
                 {

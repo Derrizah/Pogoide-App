@@ -6,7 +6,17 @@ import {
     StyleSheet, Platform
 } from 'react-native';
 import { createStackNavigator, TransitionPresets } from '@react-navigation/stack';
-import {ActivityIndicator, IconButton, Colors, TouchableRipple, FAB} from "react-native-paper";
+import {
+    ActivityIndicator,
+    IconButton,
+    Colors,
+    TouchableRipple,
+    FAB,
+    Provider,
+    Modal,
+    Title,
+    Button, Portal
+} from "react-native-paper";
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import 'firebase/database';
 import NetInfo from "@react-native-community/netinfo";
@@ -19,6 +29,13 @@ import EventItem, {PlaceholderEvent, EventItemC} from "./EventItem";
 import {togglePushNotification} from "../../scripts/NotificationsHandler";
 import i18n from '../../scripts/LocalizationHandler'
 import * as Localization from "expo-localization";
+import {
+    AdMobBanner,
+    AdMobInterstitial,
+    PublisherBanner,
+    AdMobRewarded,
+    setTestDeviceIDAsync,
+} from 'expo-ads-admob';
 
 export class UpcomingScreen extends PureComponent {
     constructor(props) {
@@ -32,6 +49,7 @@ export class UpcomingScreen extends PureComponent {
         loading: true,
         refreshing: false,
         connection: true,
+        shouldWatchAds: true,
     }
     async componentDidMount() {
         // let data = [];
@@ -224,43 +242,117 @@ export class UpcomingScreen extends PureComponent {
             }
         }
         await storeData(eventsData);
+        let thereBeAds = false;
         let disabled;
         await AsyncStorage.getItem("@allDisabled")
             .then((result) => disabled = (result === "true"));
-        if(!disabled) {
-            eventsData.map((event) => {
-                let subscriptionStatus;
-                let autoStatus;
-                AsyncStorage.getItem("@" + event.codename + "auto")
-                    .then((result) => {
-                        autoStatus = (result === "true");
-                        console.log("autostatus for " + event.title + " is " + autoStatus.toString());
-                        if(!autoStatus) {
-                            AsyncStorage.getItem("@" + event.codename)
-                                .then((result) => {
-                                    if(result !== "true") {
-                                        console.log("we sent " + event.start + " to notifhandler")
-                                        let title;
-                                        if (Localization.locale.toString() === "tr-TR") {
-                                            title = event.title_tr;
-                                        }
-                                        else {
-                                            title = event.title;
-                                        }
-                                        togglePushNotification(title, event.codename, event.start);
-                                        console.log("subscriptionStatus is " + (result !== "true").toString());
-                                        console.log("auto subscribed to an event");
-                                        AsyncStorage.setItem("@" + event.codename + "auto", "true");
-                                    }
-                                });
-                        }
-                    });
-            });
+        if(thereBeAds) {
+            if(this.state.shouldWatchAds) {
+                // test ca-app-pub-3940256099942544/5224354917
+                // ca-app-pub-3964349820995179/2820786996
+                await AdMobRewarded.setAdUnitID('ca-app-pub-3940256099942544/5224354917');
+                await AdMobRewarded.requestAdAsync();
+            }
+            console.log("shouldwatchads is " + this.state.shouldWatchAds);
         }
+        if(!thereBeAds) {
+            this.setState({shouldWatchAds: false});
+            if (!disabled) {
+                this.setNotifications();
+                // eventsData.map((event) => {
+                //     let subscriptionStatus;
+                //     let autoStatus;
+                //     AsyncStorage.getItem("@" + event.codename + "auto")
+                //         .then((result) => {
+                //             autoStatus = (result === "true");
+                //             console.log("autostatus for " + event.title + " is " + autoStatus.toString());
+                //             if (!autoStatus) {
+                //                 AsyncStorage.getItem("@" + event.codename)
+                //                     .then((result) => {
+                //                         if (result !== "true") {
+                //                             console.log("we sent " + event.start + " to notifhandler")
+                //                             let title;
+                //                             if (Localization.locale.toString() === "tr-TR") {
+                //                                 title = event.title_tr;
+                //                             } else {
+                //                                 title = event.title;
+                //                             }
+                //                             togglePushNotification(title, event.codename, event.start);
+                //                             console.log("subscriptionStatus is " + (result !== "true").toString());
+                //                             console.log("auto subscribed to an event");
+                //                             AsyncStorage.setItem("@" + event.codename + "auto", "true");
+                //                         }
+                //                     });
+                //             }
+                //         });
+                // });
+            }
+        } else {
+            let noAdsUntil;
+            AsyncStorage.getItem("@noAdsUntil")
+                .then((result) => {
+                    if(moment(moment(noAdsUntil)).isBefore(moment())) {
+                        this.setState({shouldWatchAds: true});
+                    }
+                    else{
+                        this.setState({shouldWatchAds: false});
+                        this.setNotifications();
+                    }
+                });
+        }
+    }
+    setNotifications() {
+        console.log("setnotifications called");
+        this.state.eventsList.map((event) => {
+            let subscriptionStatus;
+            let autoStatus;
+            AsyncStorage.getItem("@" + event.codename + "auto")
+                .then((result) => {
+                    autoStatus = (result === "true");
+                    console.log("autostatus for " + event.title + " is " + autoStatus.toString());
+                    if (!autoStatus) {
+                        AsyncStorage.getItem("@" + event.codename)
+                            .then((result) => {
+                                if (result !== "true") {
+                                    console.log("we sent " + event.start + " to notifhandler")
+                                    let title;
+                                    if (Localization.locale.toString() === "tr-TR") {
+                                        title = event.title_tr;
+                                    } else {
+                                        title = event.title;
+                                    }
+                                    togglePushNotification(title, event.codename, event.start);
+                                    console.log("subscriptionStatus is " + (result !== "true").toString());
+                                    console.log("auto subscribed to an event");
+                                    AsyncStorage.setItem("@" + event.codename + "auto", "true");
+                                }
+                            });
+                    }
+                });
+        });
+    }
+    async watchRewarded(){
+        AdMobRewarded.addEventListener("rewardedVideoDidRewardUser", () => {
+            console.log("rewarded user");
+            this.setState({shouldWatchAds: false});
+            this.setNotifications();
+            // let noAdsUntil = moment().add(10, 'days').toISOString();
+            let noAdsUntil = moment().add(2, 'minutes').toISOString();
+            AsyncStorage.setItem("@noAdsUntil", noAdsUntil);
+        });
+        AdMobRewarded.addEventListener("rewardedVideoDidClose", () => {
+            // if we close ads modal will close too
+        });
+        await AdMobRewarded.showAdAsync();
+    }
+    toggleModal(){
+        this.setState({shouldWatchAds: false});
     }
     render() {
         if(!this.state.loading){
-            return (<Fragment>
+            return (
+                <Provider>
+                <Fragment>
                     <FAB
                         style={{
                             position: 'absolute',
@@ -274,6 +366,16 @@ export class UpcomingScreen extends PureComponent {
                         icon="sort"
                         onPress={async () => await this.resort()}
                     />
+                    <Portal>
+                        <Modal visible={this.state.shouldWatchAds} onDismiss={() => this.toggleModal()} contentContainerStyle={{backgroundColor: 'white', padding: 20, margin: 20}}>
+                            <Title>{i18n.t('list.watch_ads_title')}</Title>
+                            <Text>{i18n.t('list.watch_ads_desc')}</Text>
+                            <Button icon="video-vintage" mode="contained" onPress={() => this.watchRewarded()}
+                                    color="#c62727" style={{marginTop: 20, marginLeft: 20, marginRight: 20, marginBottom: 0}}>
+                                {i18n.t('list.watch_ads_button')}
+                            </Button>
+                        </Modal>
+                    </Portal>
                     <View style={{
                         marginBottom: 12}}>
                         {
@@ -309,6 +411,7 @@ export class UpcomingScreen extends PureComponent {
                         />
                     </View>
                 </Fragment>
+                </Provider>
             )} else {
             return <View><PlaceholderEvent /><PlaceholderEvent /><PlaceholderEvent /></View>
         }

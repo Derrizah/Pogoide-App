@@ -21,7 +21,10 @@
     "list": {
       "sort_oldest_first": "Events ordered from oldest to newest",
       "sort_newest_first": "Events ordered from newest to oldest",
-      "unknown_date": "Unknown"
+      "unknown_date": "Unknown",
+      "watch_ads_title": "Event Notifications",
+      "watch_ads_desc": "Watch a short video ad and enable automatic event notifications for the next 10 days.",
+      "watch_ads_button": "Watch"
     },
     "item": {
       "starts": "Starts:",
@@ -81,7 +84,10 @@
     "list": {
       "sort_oldest_first": "Etkinlikler eskiden yeniye sıralandı",
       "sort_newest_first": "Etkinlikler yeniden eskiye sıralandı",
-      "unknown_date": "Bilinmiyor"
+      "unknown_date": "Bilinmiyor",
+      "watch_ads_title": "Etkinlik Bildirimleri",
+      "watch_ads_desc": "Kısa bir reklam videosu izleyerek 10 günlüğüne otomatik etkinlik bildirimleri alabilirsin.",
+      "watch_ads_button": "İzle"
     },
     "item": {
       "starts": "Başlangıç:",

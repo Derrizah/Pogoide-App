@@ -2,24 +2,16 @@ import { registerRootComponent } from 'expo';
 import {View, Platform, Text, Image, StyleSheet} from 'react-native';
 
 import React, {Fragment, useState, useEffect, useRef, Component } from 'react';
-import {AppRegistry} from 'react-native';
 import { StatusBar } from 'react-native';
-import {name as appName} from './app.json';
 import MainNavigator from './src/containers/MainNavigator';
 import i18n from './src/scripts/LocalizationHandler'
-import { NavigationContainer } from '@react-navigation/native';
 import FlashMessage from "react-native-flash-message";
 import {scale, verticalScale} from "react-native-size-matters";
 import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
 import * as Notifications from 'expo-notifications';
-import {cancelAllNotificationsAsync, registerForPushNotificationsAsync} from "./src/scripts/NotificationsHandler";
 import AppIntroSlider from 'react-native-app-intro-slider';
 import {IconButton} from "react-native-paper";
-import { AnimatedSVGPaths } from "react-native-svg-animations";
-import {pokeball, bell, details, shoes} from "./src/res/svgs";
 import AsyncStorage from '@react-native-async-storage/async-storage';
-
-import {PokeballSVG} from "./src/scripts/SVGObjects"
 
 Notifications.setNotificationHandler({
     handleNotification: async () => ({
